@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := all
-sources = src/event_flow tests
+sources = src/message_flow tests
 
 .PHONY: .pdm  ## Check that PDM is installed
 .pdm:
@@ -34,7 +34,7 @@ codespell: .pdm
 
 .PHONY: typecheck  ## Perform type-checking
 typecheck: .pdm
-	pdm run pyright src/event_flow
+	pdm run pyright src/message_flow
 
 .PHONY: test  ## Run all tests, skipping the type-checker integration tests
 test: .pdm
@@ -70,6 +70,10 @@ clean:
 	rm -rf docs/_build
 	rm -rf docs/.changelog.md docs/.version.md docs/.tmp_schema_mappings.html
 	rm -rf coverage.*
+
+.PHONY: docs  ## Generate the docs
+docs:
+	pdm run mkdocs build --strict
 
 .PHONY: help  ## Display this message
 help:

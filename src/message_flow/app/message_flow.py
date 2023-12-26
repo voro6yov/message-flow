@@ -6,21 +6,21 @@ from ..channel import Channel
 from ..message import Message
 from ..shared import Components
 from ..utils import external
-from ._internal import EventFlowSchema, Info
+from ._internal import Info, MessageFlowSchema
 from ._message_management import Dispatcher, Producer
 from .messaging import MessageConsumer, MessageProducer
 
 
 @final
 @external
-class EventFlow:
+class MessageFlow:
     def __init__(
         self,
         *,
         channels: list[Channel] | None = None,
         message_producer: MessageProducer,
         message_consumer: MessageConsumer,
-        title: str = "EventFlow",
+        title: str = "MessageFlow",
         version: str = "0.1.0",
     ) -> None:
         self._logger = logging.getLogger(self.__class__.__name__)
@@ -73,7 +73,7 @@ class EventFlow:
 
             components.merge(channel.__async_api_components__)
 
-        schema = EventFlowSchema(
+        schema = MessageFlowSchema(
             asyncapi=self.async_api_version,
             info=Info(title=self.title, version=self.version),
             channels=channels_schema,

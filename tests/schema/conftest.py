@@ -1,7 +1,7 @@
 import pytest
 from pydantic import BaseModel
 
-from event_flow import Header, Message, MessageInfo, Payload
+from message_flow import Header, Message, MessageInfo, Payload
 
 
 @pytest.fixture
