@@ -1,0 +1,4 @@
+site_name: Message Flow
+site_name: Pydantic
+site_description: Asynchronous Communication Framework
+strict: true

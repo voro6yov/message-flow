@@ -1,6 +1,6 @@
 [project]
-name = "event-flow"
-version = "0.1.0"
+name = "message-flow"
+version = "0.2.0"
 description = "Asynchronous Communication Framework"
 authors = [
     {name = "Valentin Vorobyev", email = "voro6yov.valentin@gmail.com"},
@@ -17,6 +17,18 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [tool.pdm.dev-dependencies]
+docs = [
+    "mkdocs",
+    "mkdocs-embed-external-markdown",
+    "mkdocs-exclude",
+    "mkdocs-material",
+    "mkdocs-redirects",
+    "mkdocs-simple-hooks",
+    "mkdocstrings-python",
+    "tomli",
+    "mike @ git+https://github.com/jimporter/mike.git",
+    "mkdocs-embed-external-markdown>=2.3.0",
+]
 linting = [
     "ruff>=0.1.7",
     "mypy>=1.7.1",
@@ -37,7 +49,7 @@ extend-select = ['Q', 'RUF100', 'C90', 'UP', 'I', 'T']
 extend-ignore = ['D105', 'D107', 'D205', 'D415']
 flake8-quotes = {inline-quotes = 'double', multiline-quotes = 'double'}
 mccabe = { max-complexity = 14 }
-isort = { known-first-party = ['event_flow', 'tests'] }
+isort = { known-first-party = ['message_flow', 'tests'] }
 target-version = "py37"
 
 [tool.ruff.extend-per-file-ignores]
@@ -55,7 +67,7 @@ convention = "google"
 
 
 [tool.coverage.run]
-source = ['event_flow']
+source = ['message_flow']
 branch = true
 context = '${CONTEXT}'
 
@@ -67,12 +79,12 @@ exclude_lines = [
 
 [tool.coverage.paths]
 source = [
-    'event_flow/',
+    'message_flow/',
 ]
 
 
 [tool.pyright]
-include = ['event_flow']
+include = ['message_flow']
 exclude = ['**/__init__.py', '**/application_schema/**']
 
 

@@ -10,7 +10,7 @@ class Info(TypedDict):
 
 
 @internal
-class EventFlowSchema(TypedDict):
+class MessageFlowSchema(TypedDict):
     asyncapi: str
     info: Info
     channels: dict[str, dict[str, Any]]
