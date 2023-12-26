@@ -1,5 +1,5 @@
 [project]
-name = "event-flow-sdk"
+name = "event-flow"
 version = "0.1.0"
 description = "Asynchronous Communication Framework"
 authors = [
@@ -15,9 +15,6 @@ license = {text = "Apache License 2.0"}
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
-
-[tool.pdm.build]
-includes = ["src/"]
 
 [tool.pdm.dev-dependencies]
 linting = [
@@ -58,14 +55,14 @@ convention = "google"
 
 
 [tool.coverage.run]
-source = ['event_flow.sdk']
+source = ['event_flow']
 branch = true
 context = '${CONTEXT}'
 
 [tool.coverage.report]
 precision = 2
 exclude_lines = [
-    '@export',
+    '@external',
 ]
 
 [tool.coverage.paths]
