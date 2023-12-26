@@ -165,5 +165,4 @@ cython_debug/
 .ruff_cache/
 .pdm-python
 .DS_Store
-# local files
-application_schema/
+.pdm-python
