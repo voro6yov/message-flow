@@ -48,7 +48,7 @@ testcov: test
 	@pdm run coverage lcov
 
 .PHONY: all  ## Run the standard set of checks performed in CI
-all: lint typecheck codespell test
+all: lint typecheck codespell
 
 .PHONY: clean  ## Clear local caches and build artifacts
 clean:
