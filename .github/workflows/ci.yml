@@ -35,11 +35,19 @@ jobs:
         run: make all
 
   test:
-    runs-on: ubuntu-latest
+    name: test ${{ matrix.os }} / ${{ matrix.python-version }}
     strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
       fail-fast: false
+      matrix:
+        os: [ubuntu]
+        python-version: ['3.10', '3.11', '3.12']
+
+    env:
+      OS: ${{ matrix.os }}
+      DEPS: yes
+
+    runs-on: ${{ matrix.os }}-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -53,15 +61,68 @@ jobs:
         run: |
           pdm venv create --with-pip --force $PYTHON
           pdm install -G testing
+      
+      - run: mkdir coverage
 
       - name: test
-        run: make testcov
+        run: make test
         env:
           COVERAGE_FILE: coverage/.coverage.${{ runner.os }}-py${{ matrix.python-version }}
           CONTEXT: ${{ runner.os }}-py${{ matrix.python-version }}
 
-      - name: Store coverage HTML
+      - name: store coverage files
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: coverage
+
+  coverage-combine:
+    needs: [test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: get coverage files
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage
+          path: coverage
+
+      - run: pip install coverage[toml]
+
+      - run: ls -la coverage
+      - run: coverage combine coverage
+      - run: coverage report -i
+      - run: coverage html --show-contexts --title "message-flow coverage for ${{ github.sha }}"
+
+      - name: Store coverage html
         uses: actions/upload-artifact@v3
         with:
           name: coverage-html
           path: htmlcov
+
+  check:
+
+    if: always()
+
+    outputs:
+      result: ${{ steps.all-green.outputs.result }}
+
+    needs:
+      - lint
+      - test
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        id: all-green
+        with:
+          jobs: ${{ toJSON(needs) }}
+
