@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING, Annotated, ClassVar
+from typing import TYPE_CHECKING, Annotated, Any, ClassVar
 
 from pydantic import BaseModel, create_model
 
@@ -116,7 +116,10 @@ class Message(metaclass=MessageMeta):
 
     @classmethod
     def from_payload_and_headers(cls, raw_payload: bytes, headers: dict[str, str]) -> "Message":
-        payload: dict[str, str] = json.loads(raw_payload.decode())
+        payload_obj = cls.payload_model()(**json.loads(raw_payload.decode()))
+        payload: dict[str, Any] = {
+            payload_name: getattr(payload_obj, payload_name) for payload_name in cls.payload_attributes()
+        }
         return cls(
             **payload,
             **{
