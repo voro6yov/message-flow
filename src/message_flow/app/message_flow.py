@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import final
+from typing import Callable, final
 
 from ..channel import Channel
 from ..message import Message
@@ -8,7 +8,10 @@ from ..shared import Components
 from ..utils import external
 from ._internal import Info, MessageFlowSchema
 from ._message_management import Dispatcher, Producer
+from ._simple_messaging import SimpleMessageConsumer, SimpleMessageProducer
 from .messaging import MessageConsumer, MessageProducer
+
+MessageHandler = Callable[[Message], None]
 
 
 @final
@@ -18,8 +21,8 @@ class MessageFlow:
         self,
         *,
         channels: list[Channel] | None = None,
-        message_producer: MessageProducer,
-        message_consumer: MessageConsumer,
+        message_producer: MessageProducer | None = None,
+        message_consumer: MessageConsumer | None = None,
         title: str = "MessageFlow",
         version: str = "0.1.0",
     ) -> None:
@@ -29,9 +32,9 @@ class MessageFlow:
         self.title = title
         self.version = version
 
-        self._channels = channels if channels is not None else []
-        self._message_producer = message_producer
-        self._message_consumer = message_consumer
+        self._channels = channels or []
+        self._message_producer = message_producer or SimpleMessageProducer()
+        self._message_consumer = message_consumer or SimpleMessageConsumer()
 
     @property
     def producer(self) -> Producer:
@@ -45,11 +48,18 @@ class MessageFlow:
             self._dispatcher = Dispatcher(self._channels, self._message_consumer)
         return self._dispatcher
 
-    def publish(self, message: Message) -> None:
-        if (channel := next(filter(lambda c: c.sends(message), self._channels), None)) is None:
+    def subscribe(self, address: str, message: type[Message]) -> Callable[[MessageHandler], MessageHandler]:
+        channel = self._find_or_create_channel(address)
+        return channel.subscribe(message)
+
+    def publish(self, message: Message, *, channel_address: str | None = None) -> None:
+        if (channel := self._find_channel_for_message(message)) is None and channel_address is None:
             raise RuntimeError(f"Could not find channel for {message}")
 
-        self.producer.send(channel.address, message)
+        self.producer.send(
+            channel=channel.address if channel is not None else channel_address,  # type: ignore
+            message=message,
+        )
 
     def dispatch(self) -> None:
         try:
@@ -82,3 +92,13 @@ class MessageFlow:
         )
 
         return json.dumps(schema)
+
+    def _find_channel_for_message(self, message: Message) -> Channel | None:
+        return next(filter(lambda c: c.sends(message), self._channels), None)
+
+    def _find_or_create_channel(self, address: str) -> Channel:
+        if (channel := next(filter(lambda c: c.address == address, self._channels), None)) is None:
+            channel = Channel(address)
+            self._channels.append(channel)
+
+        return channel
