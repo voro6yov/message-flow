@@ -49,7 +49,7 @@ class Channel(metaclass=ChannelMeta):
         def decorator(message: type[Message]) -> type[Message]:
             self._add_message(message)  # type: ignore
             self._add_operation(  # type: ignore
-                Operation.as_send(
+                Operation.as_event(
                     message,
                     channel=self.channel_id,
                     title=title,
@@ -84,6 +84,34 @@ class Channel(metaclass=ChannelMeta):
             )
 
             return handler
+
+        return decorator
+
+    def send(
+        self,
+        reply: type[Message] | None = None,
+        reply_channel: "Channel | None" = None,
+        *,
+        title: str | None = None,
+        summary: str | None = None,
+        description: str | None = None,
+    ) -> Callable[[type[Message]], type[Message]]:
+        def decorator(message: type[Message]) -> type[Message]:
+            reply_channel.subscribe(reply)
+            self._add_message(message)  # type: ignore
+            self._add_operation(  # type: ignore
+                Operation.as_command(
+                    message,
+                    reply,
+                    reply_channel.channel_id,
+                    channel=self.channel_id,
+                    title=title,
+                    summary=summary,
+                    description=description,
+                )
+            )
+
+            return message
 
         return decorator
 

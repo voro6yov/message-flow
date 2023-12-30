@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, Callable, final
 from ..message import Message
 from ..shared import Components, Reference
 from ..utils import internal
-from ._internal import OperationInfo, OperationMeta
+from ._internal import OperationInfo, OperationMeta, OperationReply
 from .action_type import ActionType
 
 
@@ -24,6 +24,8 @@ class Operation(metaclass=OperationMeta):
         title: str | None,
         summary: str | None,
         description: str | None,
+        reply: type[Message] | None,
+        reply_channel: str | None,
     ) -> None:
         self.action = action
         self.message = message
@@ -34,6 +36,8 @@ class Operation(metaclass=OperationMeta):
             title=title,
             summary=summary,
             description=description,
+            reply=reply,
+            reply_channel=reply_channel,
         )
 
     def __call__(self, message: Message) -> None:
@@ -45,6 +49,48 @@ class Operation(metaclass=OperationMeta):
     @property
     def operation_id(self) -> str:
         return f"{self.action}{self.message.__name__}"
+
+    @classmethod
+    def as_event(
+        cls,
+        message: type[Message],
+        *,
+        channel: str,
+        title: str | None = None,
+        summary: str | None = None,
+        description: str | None = None,
+    ) -> "Operation":
+        return cls(
+            action=ActionType.SEND,
+            message=message,
+            channel=channel,
+            title=title,
+            summary=summary,
+            description=description,
+        )
+
+    @classmethod
+    def as_command(
+        cls,
+        message: type[Message],
+        reply: type[Message] | None,
+        reply_channel: str | None,
+        *,
+        channel: str,
+        title: str | None = None,
+        summary: str | None = None,
+        description: str | None = None,
+    ) -> "Operation":
+        return cls(
+            action=ActionType.SEND,
+            message=message,
+            reply=reply,
+            reply_channel=reply_channel,
+            channel=channel,
+            title=title,
+            summary=summary,
+            description=description,
+        )
 
     @classmethod
     def as_send(
@@ -98,13 +144,21 @@ class Operation(metaclass=OperationMeta):
         title: str | None,
         summary: str | None,
         description: str | None,
+        reply: type[Message] | None,
+        reply_channel: str | None,
     ) -> OperationInfo:
         operation_info = OperationInfo(channel=channel)
+
         if title is not None:
             operation_info["title"] = title
         if summary is not None:
             operation_info["summary"] = summary
         if description is not None:
             operation_info["description"] = description
+        
+        if reply is None and reply_channel is None:
+            raise RuntimeError("Reply and Reply channel cannot be both None")
+        
+        operation_info["reply"] = OperationReply(channel=reply_channel, messages=[reply])
 
         return operation_info
