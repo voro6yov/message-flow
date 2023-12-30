@@ -1,19 +1,23 @@
 import logging
+from typing import final
 
 from ...channel import Channel
 from ...operation import Operation
 from ...utils import internal
 from ..messaging import MessageConsumer
+from .producer import Producer
 from .routing_headers import RoutingHeaders
 
 
+@final
 @internal
 class Dispatcher:
-    def __init__(self, channels: list[Channel], message_consumer: MessageConsumer) -> None:
+    def __init__(self, channels: list[Channel], message_consumer: MessageConsumer, producer: Producer) -> None:
         self._logger = logging.getLogger(self.__class__.__name__)
 
         self._channels = channels
         self._message_consumer = message_consumer
+        self._producer = producer
 
     @property
     def addresses(self) -> set[str]:
@@ -33,12 +37,13 @@ class Dispatcher:
         if (handler := self._find_target_operation(headers)) is None:
             return
 
-        handler(handler.message.from_payload_and_headers(payload, headers))
+        if (message := handler(handler.message.from_payload_and_headers(payload, headers))) is not None:
+            self._producer.send(headers[RoutingHeaders.REPLY_TO], message)
 
     def _find_target_operation(self, headers: dict[str, str]) -> Operation | None:
         for channel in self._channels:
             if (
-                operation := channel.find_operation(
+                operation := channel.receives(
                     headers[RoutingHeaders.ADDRESS],
                     headers[RoutingHeaders.TYPE],
                 )

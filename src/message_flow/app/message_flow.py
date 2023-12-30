@@ -4,6 +4,7 @@ from typing import Callable, final
 
 from ..channel import Channel
 from ..message import Message
+from ..operation import Operation
 from ..shared import Components
 from ..utils import external
 from ._internal import Info, MessageFlowSchema
@@ -11,7 +12,7 @@ from ._message_management import Dispatcher, Producer
 from ._simple_messaging import SimpleMessageConsumer, SimpleMessageProducer
 from .messaging import MessageConsumer, MessageProducer
 
-MessageHandler = Callable[[Message], None]
+MessageHandler = Callable[[Message], Message | None]
 
 
 @final
@@ -45,7 +46,7 @@ class MessageFlow:
     @property
     def dispatcher(self) -> Dispatcher:
         if not hasattr(self, "_dispatcher"):
-            self._dispatcher = Dispatcher(self._channels, self._message_consumer)
+            self._dispatcher = Dispatcher(self._channels, self._message_consumer, self.producer)
         return self._dispatcher
 
     def subscribe(self, address: str, message: type[Message]) -> Callable[[MessageHandler], MessageHandler]:
@@ -53,12 +54,26 @@ class MessageFlow:
         return channel.subscribe(message)
 
     def publish(self, message: Message, *, channel_address: str | None = None) -> None:
-        if (channel := self._find_channel_for_message(message)) is None and channel_address is None:
+        if (channel := self._find_channel(message)) is None and channel_address is None:
             raise RuntimeError(f"Could not find channel for {message}")
 
         self.producer.send(
             channel=channel.address if channel is not None else channel_address,  # type: ignore
             message=message,
+        )
+
+    def send(
+        self, message: Message, *, channel_address: str | None = None, reply_to_address: str | None = None
+    ) -> None:
+        channel, operation = self._find_channel_and_operation(message) or (None, None)
+
+        if channel is None and channel_address is None:
+            raise RuntimeError(f"Could not find channel for {message}")
+
+        self.producer.send(
+            channel=channel.address if channel is not None else channel_address,  # type: ignore
+            message=message,
+            reply_to_address=operation.reply.channel if operation is not None else reply_to_address,
         )
 
     def dispatch(self) -> None:
@@ -93,8 +108,14 @@ class MessageFlow:
 
         return json.dumps(schema)
 
-    def _find_channel_for_message(self, message: Message) -> Channel | None:
-        return next(filter(lambda c: c.sends(message), self._channels), None)
+    def _find_channel(self, message: Message) -> Channel | None:
+        return next(filter(lambda c: c.sends(message.message_id), self._channels), None)
+
+    def _find_channel_and_operation(self, message: Message) -> tuple[Channel, Operation] | None:
+        for channel in self._channels:
+            for operation in channel.operations:
+                if operation.sends(message.message_id):
+                    return channel, operation
 
     def _find_or_create_channel(self, address: str) -> Channel:
         if (channel := next(filter(lambda c: c.address == address, self._channels), None)) is None:

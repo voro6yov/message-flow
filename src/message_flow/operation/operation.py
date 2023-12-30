@@ -3,8 +3,9 @@ from typing import TYPE_CHECKING, Any, Callable, final
 from ..message import Message
 from ..shared import Components, Reference
 from ..utils import internal
-from ._internal import OperationInfo, OperationMeta, OperationReply
+from ._internal import OperationInfo, OperationMeta
 from .action_type import ActionType
+from .operation_reply import OperationReply
 
 
 @final
@@ -18,17 +19,18 @@ class Operation(metaclass=OperationMeta):
         self,
         action: str,
         message: type[Message],
-        handler: Callable[[Message], None] | None = None,
+        reply: type[Message] | None = None,
+        reply_channel: str | None = None,
+        handler: Callable[[Message], Message | None] | None = None,
         *,
         channel: str,
         title: str | None,
         summary: str | None,
         description: str | None,
-        reply: type[Message] | None,
-        reply_channel: str | None,
     ) -> None:
         self.action = action
         self.message = message
+        self.reply = OperationReply(message=reply, channel=reply_channel)
         self.handler = handler
 
         self.operation_info = self._make_operation_info(
@@ -36,15 +38,13 @@ class Operation(metaclass=OperationMeta):
             title=title,
             summary=summary,
             description=description,
-            reply=reply,
-            reply_channel=reply_channel,
         )
 
-    def __call__(self, message: Message) -> None:
+    def __call__(self, message: Message) -> Message | None:
         if self.handler is None:
             raise RuntimeError(f"Handler not defined for {self.message}")
 
-        self.handler(message)
+        return self.handler(message)
 
     @property
     def operation_id(self) -> str:
@@ -112,7 +112,7 @@ class Operation(metaclass=OperationMeta):
         )
 
     @classmethod
-    def as_receive(
+    def as_subscription(
         cls,
         message: type[Message],
         handler: Any,
@@ -144,8 +144,6 @@ class Operation(metaclass=OperationMeta):
         title: str | None,
         summary: str | None,
         description: str | None,
-        reply: type[Message] | None,
-        reply_channel: str | None,
     ) -> OperationInfo:
         operation_info = OperationInfo(channel=channel)
 
@@ -155,10 +153,5 @@ class Operation(metaclass=OperationMeta):
             operation_info["summary"] = summary
         if description is not None:
             operation_info["description"] = description
-        
-        if reply is None and reply_channel is None:
-            raise RuntimeError("Reply and Reply channel cannot be both None")
-        
-        operation_info["reply"] = OperationReply(channel=reply_channel, messages=[reply])
 
         return operation_info

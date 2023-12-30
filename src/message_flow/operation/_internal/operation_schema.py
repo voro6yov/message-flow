@@ -5,8 +5,8 @@ from ...utils import internal
 
 @internal
 class OperationReplySchema(TypedDict, total=False):
-    channel: str
-    messages: list[str]
+    channel: dict[str, str]
+    messages: list[dict[str, str]]
 
 
 @internal
