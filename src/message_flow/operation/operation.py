@@ -5,6 +5,7 @@ from ..shared import Components, Reference
 from ..utils import internal
 from ._internal import OperationInfo, OperationMeta
 from .action_type import ActionType
+from .operation_reply import OperationReply
 
 
 @final
@@ -18,7 +19,9 @@ class Operation(metaclass=OperationMeta):
         self,
         action: str,
         message: type[Message],
-        handler: Callable[[Message], None] | None = None,
+        reply: type[Message] | None = None,
+        reply_channel: str | None = None,
+        handler: Callable[[Message], Message | None] | None = None,
         *,
         channel: str,
         title: str | None,
@@ -27,6 +30,7 @@ class Operation(metaclass=OperationMeta):
     ) -> None:
         self.action = action
         self.message = message
+        self.reply = OperationReply(message=reply, channel=reply_channel)
         self.handler = handler
 
         self.operation_info = self._make_operation_info(
@@ -36,15 +40,57 @@ class Operation(metaclass=OperationMeta):
             description=description,
         )
 
-    def __call__(self, message: Message) -> None:
+    def __call__(self, message: Message) -> Message | None:
         if self.handler is None:
             raise RuntimeError(f"Handler not defined for {self.message}")
 
-        self.handler(message)
+        return self.handler(message)
 
     @property
     def operation_id(self) -> str:
         return f"{self.action}{self.message.__name__}"
+
+    @classmethod
+    def as_event(
+        cls,
+        message: type[Message],
+        *,
+        channel: str,
+        title: str | None = None,
+        summary: str | None = None,
+        description: str | None = None,
+    ) -> "Operation":
+        return cls(
+            action=ActionType.SEND,
+            message=message,
+            channel=channel,
+            title=title,
+            summary=summary,
+            description=description,
+        )
+
+    @classmethod
+    def as_command(
+        cls,
+        message: type[Message],
+        reply: type[Message] | None,
+        reply_channel: str | None,
+        *,
+        channel: str,
+        title: str | None = None,
+        summary: str | None = None,
+        description: str | None = None,
+    ) -> "Operation":
+        return cls(
+            action=ActionType.SEND,
+            message=message,
+            reply=reply,
+            reply_channel=reply_channel,
+            channel=channel,
+            title=title,
+            summary=summary,
+            description=description,
+        )
 
     @classmethod
     def as_send(
@@ -66,7 +112,7 @@ class Operation(metaclass=OperationMeta):
         )
 
     @classmethod
-    def as_receive(
+    def as_subscription(
         cls,
         message: type[Message],
         handler: Any,
@@ -100,6 +146,7 @@ class Operation(metaclass=OperationMeta):
         description: str | None,
     ) -> OperationInfo:
         operation_info = OperationInfo(channel=channel)
+
         if title is not None:
             operation_info["title"] = title
         if summary is not None:

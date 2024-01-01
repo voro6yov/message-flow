@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, final
 
 from ...shared import Components, Reference
 from ...utils import internal
-from .operation_schema import OperationSchema
+from .operation_schema import OperationReplySchema, OperationSchema
 
 if TYPE_CHECKING:
     from ..operation import Operation
@@ -48,5 +48,11 @@ class OperationMeta(ABCMeta):
 
         if (description := operation.operation_info.get("description")) is not None:
             schema["description"] = description
+
+        if operation.reply.is_provided and operation.reply.is_valid:
+            schema["reply"] = OperationReplySchema(
+                channel=Reference.for_channel(operation.reply.channel).as_link(),  # type: ignore
+                messages=[operation.reply.message.__async_api_reference__.as_direct_component()],  # type: ignore
+            )
 
         operation.__async_api_components__.add_operation(operation.operation_id, schema)  # type: ignore

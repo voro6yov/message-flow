@@ -6,7 +6,7 @@ from ..shared import Components, Reference
 from ..utils import external
 from ._internal import ChannelInfo, ChannelMeta
 
-EventHandler = Callable[[Message], None]
+MessageHandler = Callable[[Message], Message | None]
 
 
 @final
@@ -49,8 +49,35 @@ class Channel(metaclass=ChannelMeta):
         def decorator(message: type[Message]) -> type[Message]:
             self._add_message(message)  # type: ignore
             self._add_operation(  # type: ignore
-                Operation.as_send(
+                Operation.as_event(
                     message,
+                    channel=self.channel_id,
+                    title=title,
+                    summary=summary,
+                    description=description,
+                )
+            )
+
+            return message
+
+        return decorator
+
+    def send(
+        self,
+        reply: type[Message] | None = None,
+        reply_channel: "Channel | None" = None,
+        *,
+        title: str | None = None,
+        summary: str | None = None,
+        description: str | None = None,
+    ) -> Callable[[type[Message]], type[Message]]:
+        def decorator(message: type[Message]) -> type[Message]:
+            self._add_message(message)  # type: ignore
+            self._add_operation(  # type: ignore
+                Operation.as_command(
+                    message,
+                    reply,
+                    reply_channel.channel_id if reply_channel is not None else None,
                     channel=self.channel_id,
                     title=title,
                     summary=summary,
@@ -69,11 +96,11 @@ class Channel(metaclass=ChannelMeta):
         title: str | None = None,
         summary: str | None = None,
         description: str | None = None,
-    ) -> Callable[[EventHandler], EventHandler]:
-        def decorator(handler: EventHandler) -> EventHandler:
+    ) -> Callable[[MessageHandler], MessageHandler]:
+        def decorator(handler: MessageHandler) -> MessageHandler:
             self._add_message(message)  # type: ignore
             self._add_operation(  # type: ignore
-                Operation.as_receive(
+                Operation.as_subscription(
                     message,
                     handler,
                     channel=self.channel_id,
@@ -87,16 +114,16 @@ class Channel(metaclass=ChannelMeta):
 
         return decorator
 
-    def sends(self, message: Message) -> bool:
+    def sends(self, message_id: str) -> bool:
         return (
             next(
-                filter(lambda o: o.sends(message.message_id), self.operations),
+                filter(lambda o: o.sends(message_id), self.operations),
                 None,
             )
             is not None
         )
 
-    def find_operation(self, address: str, message_id: str) -> Operation | None:
+    def receives(self, address: str, message_id: str) -> Operation | None:
         return next(
             filter(
                 lambda o: address == self.address and o.receives(message_id),

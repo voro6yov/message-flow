@@ -46,7 +46,7 @@ class SimpleMessageConsumer(MessageConsumer):
 
             time.sleep(1)
         except Exception as error:
-            self._logger.error("An error occurred while consuming events", exc_info=error)
+            self._logger.info("An error occurred while consuming events", exc_info=error)
         finally:
             self._commit_message(message)
 

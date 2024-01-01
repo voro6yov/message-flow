@@ -129,7 +129,7 @@ class Message(metaclass=MessageMeta):
             },
         )
 
-    def add_headers(self, extra_headers: dict[str, str]) -> None:
+    def add_routing_headers(self, extra_headers: dict[str, str]) -> None:
         self.headers.update(extra_headers)
 
     @classmethod

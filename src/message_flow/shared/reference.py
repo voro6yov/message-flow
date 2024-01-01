@@ -33,5 +33,8 @@ class Reference:
     def as_component(self) -> dict[str, dict[str, str]]:
         return {self.id: {"$ref": f"#/components{self.reference}"}}
 
+    def as_direct_component(self) -> dict[str, str]:
+        return {"$ref": f"#/components{self.reference}"}
+
     def merge(self, other: "Reference") -> "Reference":
         return Reference(other.id, f"{self.reference}{other.reference}")
