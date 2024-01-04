@@ -57,14 +57,17 @@ class SimpleMessageConsumer(MessageConsumer):
             if message is not None:
                 self._handle_message(message)
 
+            self._logger.debug("Got message empty message. Start sleeping...")
             time.sleep(1)
         except Exception as error:
             self._logger.info("An error occurred while consuming events", exc_info=error)
         finally:
             self._commit_message(message)
+            self._logger.debug("Message %s is committed.")
 
     def _handle_message(self, message: str) -> None:
         channel, payload, headers = self._parse_message(message)
+        self._logger.debug("Got message with payload %s and headers %s from channel %s", payload, headers, channel)
 
         if (handler := self._router.get(channel)) is None:
             self._logger.warning(f"Received message for unknown channel {channel}")

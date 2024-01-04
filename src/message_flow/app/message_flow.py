@@ -1,6 +1,8 @@
 import json
 import logging
-from typing import Callable, final
+from typing import Annotated, Callable, final
+
+from typing_extensions import Doc
 
 from ..channel import Channel
 from ..message import Message
@@ -18,6 +20,18 @@ MessageHandler = Callable[[Message], Message | None]
 @final
 @external
 class MessageFlow:
+    """
+    `MessageFlow` app class, the main entrypoint to use MessageFlow.
+
+    ## Example
+
+    ```python
+    from message_flow import MessageFlow
+
+    app = MessageFlow()
+    ```
+    """
+
     def __init__(
         self,
         *,
@@ -25,9 +39,26 @@ class MessageFlow:
         message_producer: MessageProducer | None = None,
         message_consumer: MessageConsumer | None = None,
         title: str = "MessageFlow",
-        version: str = "0.1.0",
+        version: Annotated[
+            str,
+            Doc(
+                """
+                The version of the application API (not to be confused with the specification version).
+
+                It will be added to the generated AsyncAPI.
+
+                **Example**
+
+                ```python
+                from message_flow import MessageFlow
+
+                app = MessageFlow(version="0.0.1")
+                ```
+                """
+            ),
+        ] = "0.1.0",
     ) -> None:
-        self._logger = logging.getLogger(self.__class__.__name__)
+        self._logger = logging.getLogger(__name__)
 
         self.async_api_version: str = "3.0.0"
         self.title = title
