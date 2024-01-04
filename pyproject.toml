@@ -74,7 +74,17 @@ context = '${CONTEXT}'
 [tool.coverage.report]
 precision = 2
 exclude_lines = [
-    '@external',
+    'if TYPE_CHECKING:',
+    'def __str__',
+    'def __repr__',
+    'pass',
+    'hasattr',
+    'SimpleMessageConsumer',
+    'SimpleMessageProducer',
+]
+omit = [
+    '*/utils/*',
+    '__init__.py',
 ]
 
 [tool.coverage.paths]

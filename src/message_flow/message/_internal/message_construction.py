@@ -95,20 +95,12 @@ class MessageMeta(ABCMeta):
         def _has_constructor(self) -> bool:
             return "__init__" in self.cls.__dict__
 
-        def _check_argument_order(self) -> None:
-            seen_default = False
-            for component_name, component in self.components.items():
-                if component.default is not None:
-                    seen_default = True
-                elif seen_default:
-                    raise RuntimeError(f"Non-default attribute {component_name!r} follows default attribute.")
-
         def _make_body(self) -> str:
             body_lines = []
 
             for component_name, component in self.components.items():
                 default_name = f"_dflt_{component_name}"
-                if component.default is not None:
+                if component.default is not PydanticUndefined:
                     self.globals[default_name] = component.default
 
                 value = component_name
@@ -123,14 +115,14 @@ class MessageMeta(ABCMeta):
         def _make_args(self) -> str:
             init_params = []
             for component_name, component in self.components.items():
-                if component.default is None or component.default == PydanticUndefined:
+                if component.default == PydanticUndefined:
                     default = ""
                 else:
                     default = f" = _dflt_{component_name}"
 
                 init_params.append(f"{component_name}: _type_{component_name}{default}")
 
-            return ", ".join(["self", "*"] + init_params)
+            return ", ".join(["self", "*" if init_params else ""] + init_params)
 
         def _make_return_annotation(self) -> str:
             self.locals["_return_type"] = None
@@ -150,9 +142,7 @@ class MessageMeta(ABCMeta):
 
         def generate_init(self) -> None:
             if self._has_constructor():
-                return
-
-            self._check_argument_order()
+                raise RuntimeError("Please do not define explicit constructor.")
 
             setattr(self.cls, "__init__", self._make_constructor())
 

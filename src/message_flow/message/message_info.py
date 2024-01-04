@@ -11,4 +11,4 @@ class MessageInfo(TypedDict, total=False):
     title: str
     summary: str
     description: str
-    trait: list[MessageTrait]
+    trait: list[type[MessageTrait]]

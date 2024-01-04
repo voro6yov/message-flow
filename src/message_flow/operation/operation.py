@@ -93,25 +93,6 @@ class Operation(metaclass=OperationMeta):
         )
 
     @classmethod
-    def as_send(
-        cls,
-        message: type[Message],
-        *,
-        channel: str,
-        title: str | None = None,
-        summary: str | None = None,
-        description: str | None = None,
-    ) -> "Operation":
-        return cls(
-            action=ActionType.SEND,
-            message=message,
-            channel=channel,
-            title=title,
-            summary=summary,
-            description=description,
-        )
-
-    @classmethod
     def as_subscription(
         cls,
         message: type[Message],
