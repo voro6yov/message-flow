@@ -39,8 +39,6 @@ class Producer:
         else:
             self._channel.send()(message)
 
-    # def add_reply(self, reply: type[Message], reply_to: str) -> None:
-
     def publish(self, message: Message, to: str | None = None) -> None:
         try:
             self._app.publish(message=message, channel_address=to)

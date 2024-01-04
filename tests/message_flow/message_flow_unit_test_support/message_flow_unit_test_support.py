@@ -47,11 +47,6 @@ class MessageFlowUnitTestSupport:
 
         return self
 
-    # def with_reply(self, reply: type[Message], reply_to: str) -> "MessageFlowUnitTestSupport":
-    #     self._producer.add_reply(reply, reply_to)
-
-    # return self
-
     def and_with_channel(self, address: str) -> "MessageFlowUnitTestSupport":
         self._producer.add_channel(address)
 

@@ -13,7 +13,7 @@ from .routing_headers import RoutingHeaders
 @internal
 class Dispatcher:
     def __init__(self, channels: list[Channel], message_consumer: MessageConsumer, producer: Producer) -> None:
-        self._logger = logging.getLogger(self.__class__.__name__)
+        self._logger = logging.getLogger(__name__)
 
         self._channels = channels
         self._message_consumer = message_consumer
