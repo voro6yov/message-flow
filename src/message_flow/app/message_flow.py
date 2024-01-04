@@ -49,9 +49,8 @@ class MessageFlow:
             self._dispatcher = Dispatcher(self._channels, self._message_consumer, self.producer)
         return self._dispatcher
 
-    def subscribe(self, address: str, message: type[Message]) -> Callable[[MessageHandler], MessageHandler]:
-        channel = self._find_or_create_channel(address)
-        return channel.subscribe(message)
+    def add_channel(self, channel: Channel) -> None:
+        self._channels.append(channel)
 
     def publish(self, message: Message, *, channel_address: str | None = None) -> None:
         if (channel := self._find_channel(message)) is None and channel_address is None:
@@ -75,6 +74,10 @@ class MessageFlow:
             message=message,
             reply_to_address=operation.reply.channel if operation is not None else reply_to_address,
         )
+
+    def subscribe(self, address: str, message: type[Message]) -> Callable[[MessageHandler], MessageHandler]:
+        channel = self._find_or_create_channel(address)
+        return channel.subscribe(message)
 
     def dispatch(self) -> None:
         try:

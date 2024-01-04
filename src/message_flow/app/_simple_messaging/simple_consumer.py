@@ -10,10 +10,16 @@ from ..messaging import MessageConsumer
 @final
 @internal
 class SimpleMessageConsumer(MessageConsumer):
-    def __init__(self, file_path: str = "/tmp/message-flow-queue.txt") -> None:
+    def __init__(
+        self, file_path: str = "/tmp/message-flow-queue.txt", dry_run: bool = False, throw_error: bool = False
+    ) -> None:
         self._logger = logging.getLogger(__name__)
 
-        self._fp = open(file_path, "r+")
+        self._dry_run = dry_run
+        self._throw_error = throw_error
+        self.closed = False
+
+        self._fp = open(file_path, "a+")
         self._router = {}
 
         self._initialize()
@@ -26,11 +32,18 @@ class SimpleMessageConsumer(MessageConsumer):
         self._logger.info("Start consuming")
 
         while True:
+            if self._dry_run:
+                break
+
+            if self._throw_error:
+                raise RuntimeError("Test Error")
+
             message = self._get_message()
             self._process_message(message)
 
     def close(self) -> None:
-        return self._fp.close()
+        self.closed = True
+        self._fp.close()
 
     def _initialize(self) -> None:
         self._fp.seek(0, 2)

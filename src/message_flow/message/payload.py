@@ -80,10 +80,7 @@ class Payload(FieldInfo):
         self._private_name = f"_{name}"
 
     def __get__(self, obj: Any, objtype: Any | None = None) -> Any:
-        try:
-            return getattr(obj, self._private_name)
-        except AttributeError:
-            return None
+        return getattr(obj, self._private_name)
 
     def __set__(self, obj: Any, value: Any) -> None:
         self._validate(value)

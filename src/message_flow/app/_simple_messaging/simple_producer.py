@@ -12,6 +12,8 @@ class SimpleMessageProducer(MessageProducer):
     def __init__(self, file_path: str = "/tmp/message-flow-queue.txt") -> None:
         self._logger = logging.getLogger(__name__)
 
+        self.closed = False
+
         self._file_path = file_path
 
     def send(self, channel: str, payload: bytes, headers: dict[str, str] | None = None) -> None:
@@ -20,4 +22,4 @@ class SimpleMessageProducer(MessageProducer):
             fp.write(f"{channel}\t{payload.decode()}\t{json.dumps(headers)}\n")
 
     def close(self) -> None:
-        pass
+        self.closed = True
