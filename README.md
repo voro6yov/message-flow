@@ -1,6 +1,7 @@
 # Message Flow
 
 [![CI](https://github.com/voro6yov/message-flow/actions/workflows/ci.yml/badge.svg?event=push&branch=main)](https://github.com/voro6yov/message-flow/actions/workflows/ci.yml?query=branch%3Amain+event%3Apush)
+[![Coverage](https://coverage-badge.samuelcolvin.workers.dev/voro6yov/message-flow.svg)](https://github.com/voro6yov/message-flow/actions?query=event%3Apush+branch%3Amain+workflow%3ACI)<br>
 [![pypi](https://img.shields.io/pypi/v/message-flow.svg)](https://pypi.python.org/pypi/message-flow)
 [![downloads](https://static.pepy.tech/badge/message-flow/month)](https://pepy.tech/project/message-flow)<br>
 [![license](https://img.shields.io/github/license/voro6yov/message-flow.svg)](https://github.com/voro6yov/message-flow/blob/main/LICENSE)
