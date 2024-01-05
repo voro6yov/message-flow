@@ -55,7 +55,24 @@ markdown_extensions:
 
 plugins:
   - search
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            extensions:
+              - griffe_typingdoc
+            show_root_heading: true
+            show_if_no_docstring: true
+            inherited_members: true
+            members_order: source
+            separate_signature: true
+            unwrap_annotated: true
+            filters: ["!^_"]
+            merge_init_into_class: true
+            docstring_section_style: spacy
+            signature_crossrefs: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
 
 repo_name: voro6yov/message-flow
 repo_url: https://github.com/voro6yov/message-flow
@@ -71,6 +88,8 @@ validation:
 nav:
   - Get Started:
     - Welcome to Message Flow: index.md
+  - API Documentation:
+    - MessageFlow: api/message_flow.md
 
 extra_css:
   - stylesheets/extra.css
