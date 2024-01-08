@@ -5,7 +5,7 @@
 groups = ["default", "linting", "testing", "docs"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:48e207fa39adde7bd90194e88f7626498c78bcea6b1dc8a2ced27c526e36e048"
+content_hash = "sha256:e580363fdc26ad4f2a6255687b67c93ca27ce44a4451172ed15837a3a5b64c5c"
 
 [[package]]
 name = "annotated-types"
@@ -225,6 +225,20 @@ dependencies = [
 files = [
     {file = "griffe-0.38.1-py3-none-any.whl", hash = "sha256:334c79d3b5964ade65c05dfcaf53518c576dedd387aaba5c9fd71212f34f1483"},
     {file = "griffe-0.38.1.tar.gz", hash = "sha256:bd68d7da7f3d87bc57eb9962b250db123efd9bbcc06c11c1a91b6e583b2a9361"},
+]
+
+[[package]]
+name = "griffe-typingdoc"
+version = "0.2.4"
+requires_python = ">=3.8"
+summary = "Griffe extension for PEP 727 – Documentation Metadata in Typing."
+dependencies = [
+    "griffe>=0.38",
+    "typing-extensions>=4.7",
+]
+files = [
+    {file = "griffe_typingdoc-0.2.4-py3-none-any.whl", hash = "sha256:bc7843c2e8163454252da70c513313b8454c886dd0973637c4690453ecdbb387"},
+    {file = "griffe_typingdoc-0.2.4.tar.gz", hash = "sha256:83c1bf81216dd76d41d7f973f4bb63d2bb34d2f731e0ef3aef450320c80520cb"},
 ]
 
 [[package]]

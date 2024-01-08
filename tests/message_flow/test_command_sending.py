@@ -1,3 +1,5 @@
+import pytest
+
 from message_flow import Message
 
 from .message_flow_unit_test_support import MessageFlowUnitTestSupport
@@ -146,3 +148,37 @@ def test_sending__without_channel_definition__without_reply__successful(
         .expect_no_messages_was_sent()
     )
     # fmt: on
+
+
+def test_sending__command_added_only_with_reply(
+    test_channel: str,
+    test_message: type[Message],
+    another_test_message: type[Message],
+):
+    with pytest.raises(RuntimeError):
+        # fmt: off
+        (
+            MessageFlowUnitTestSupport.given()
+                .sender()
+                    .with_channel(test_channel)
+                    .for_command(test_message, another_test_message)
+            .expect()
+        )
+        # fmt: on
+
+
+def test_sending__command_added_only_with_reply_address(
+    test_channel: str,
+    another_test_channel: str,
+    test_message: type[Message],
+):
+    with pytest.raises(RuntimeError):
+        # fmt: off
+        (
+            MessageFlowUnitTestSupport.given()
+                .sender()
+                    .with_channel(test_channel)
+                    .for_command(test_message, reply_to=another_test_channel)
+            .expect()
+        )
+        # fmt: on

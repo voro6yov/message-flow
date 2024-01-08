@@ -1,4 +1,6 @@
-from typing import final
+from typing import Annotated, final
+
+from typing_extensions import Doc
 
 from ..utils import external
 
@@ -7,13 +9,41 @@ from ..utils import external
 @external
 class CorrelationId:
     """
-    An object that specifies an identifier at design time that can used for message tracing and correlation.
+    An object that defines a design-time identifier for message tracing and correlation purposes.
+
+    ## Example
+
+    ```python
+    from message_flow import CorrelationId
+
+    correlation_id = CorrelationId("corelation_id")
+    ```
     """
 
     description: str | None
     location: str
 
-    def __init__(self, location: str, description: str | None = None) -> None:
+    def __init__(
+        self,
+        location: Annotated[str, Doc("A header name that specifies the location of the correlation ID.")],
+        description: Annotated[
+            str | None,
+            Doc(
+                """
+                An optional description of the identifier. CommonMark syntax can 
+                be used for rich text representation.
+
+                ## Example
+
+                ```python
+                from message_flow import CorrelationId
+
+                correlation_id = CorrelationId("corelation_id", "Correlation Id used for tracing.")
+                ```
+                """
+            ),
+        ] = None,
+    ) -> None:
         self.description = description
         self.location = location
 
