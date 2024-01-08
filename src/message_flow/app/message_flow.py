@@ -39,6 +39,8 @@ class MessageFlow:
                 """
                 A list of Channels.
 
+                **Example**
+
                 ```python
                 from message_flow import MessageFlow, Channel
 

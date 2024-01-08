@@ -19,25 +19,34 @@ class Producer:
         self._reply_handler: mock.Mock | None = None
 
     def add_channel(self, address: str) -> None:
-        self._channel = Channel(address)
-        self._app.add_channel(self._channel)
+        try:
+            self._channel = Channel(address)
+            self._app.add_channel(self._channel)
+        except Exception as error:
+            self._parent._creation_exception = error
 
     def add_publication(self, message: type[Message]) -> None:
-        self._channel.publish()(message)
+        try:
+            self._channel.publish()(message)
+        except Exception as error:
+            self._parent._creation_exception = error
 
     def add_command(self, message: type[Message], reply: type[Message] | None, reply_to: str | None) -> None:
-        if reply is not None and reply_to is not None:
-            self._reply_channel = Channel(reply_to)
-            self._app.add_channel(self._reply_channel)
+        try:
+            if reply is not None and reply_to is not None:
+                self._reply_channel = Channel(reply_to)
+                self._app.add_channel(self._reply_channel)
 
-            self._reply_handler = mock.MagicMock()
-            self._reply_handler.return_value = None
+                self._reply_handler = mock.MagicMock()
+                self._reply_handler.return_value = None
 
-            self._reply_channel.subscribe(reply)(self._reply_handler)
+                self._reply_channel.subscribe(reply)(self._reply_handler)
 
-            self._channel.send(reply, self._reply_channel)(message)
-        else:
-            self._channel.send()(message)
+                self._channel.send(reply, self._reply_channel)(message)
+            else:
+                self._channel.send(reply=reply, reply_channel=reply_to)(message)
+        except Exception as error:
+            self._parent._creation_exception = error
 
     def publish(self, message: Message, to: str | None = None) -> None:
         try:

@@ -33,6 +33,9 @@ class Operation(metaclass=OperationMeta):
         self.reply = OperationReply(message=reply, channel=reply_channel)
         self.handler = handler
 
+        if not self.reply.is_valid:
+            raise RuntimeError("You should provide both reply and reply channel address.")
+
         self.operation_info = self._make_operation_info(
             channel=channel,
             title=title,

@@ -41,6 +41,7 @@ markdown_extensions:
 - toc:
     permalink: true
     title: Page contents
+    toc_depth: 3
 - admonition
 - pymdownx.details
 - pymdownx.superfences
@@ -90,6 +91,7 @@ nav:
     - Welcome to Message Flow: index.md
   - API Documentation:
     - MessageFlow: api/message_flow.md
+    - Channel: api/channel.md
 
 extra_css:
   - stylesheets/extra.css
