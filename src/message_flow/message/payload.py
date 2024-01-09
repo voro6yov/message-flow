@@ -4,6 +4,7 @@ from typing import Annotated, Any, Callable, Literal, final
 from pydantic import TypeAdapter
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined as Undefined
+from typing_extensions import Doc
 
 from ..utils import external
 
@@ -11,39 +12,228 @@ from ..utils import external
 @final
 @external
 class Payload(FieldInfo):
+    """
+    Declare a payload attribute of the `Message`.
+
+    **Example**
+
+    ```python
+    from message_flow import Message, Payload
+
+    class CreateOrder(Message):
+        product_id: str = Payload()
+    ```
+    """
+
     def __init__(
         self,
-        default: Any = Undefined,
+        default: Annotated[
+            Any,
+            Doc(
+                """
+                Default value if the parameter field is not set.
+                """
+            ),
+        ] = Undefined,
         *,
-        annotation: type[Any] | None = None,
-        default_factory: Callable[[], Any] | None = None,
-        alias: str | None = None,
-        alias_priority: int | None = None,
-        validation_alias: str | None = None,
-        serialization_alias: str | None = None,
-        title: str | None = None,
-        description: str | None = None,
-        examples: list[Any] | None = None,
-        gt: float | None = None,
-        ge: float | None = None,
-        lt: float | None = None,
-        le: float | None = None,
-        multiple_of: float | None = Undefined,
-        strict: bool | None = Undefined,
-        min_length: int | None = None,
-        max_length: int | None = None,
-        pattern: str | None = None,
-        allow_inf_nan: bool | None = Undefined,
-        max_digits: int | None = Undefined,
-        decimal_places: int | None = Undefined,
-        union_mode: Literal["smart", "left_to_right"] | None = None,
-        discriminator: str | None = None,
-        json_schema_extra: dict[str, Any] | Callable[[dict[str, Any]], None] | None = None,
-        **extra: Any,
+        default_factory: Annotated[
+            Callable[[], Any] | None,
+            Doc(
+                """
+                A callable to generate the default value.
+                """
+            ),
+        ] = None,
+        alias: Annotated[
+            str | None,
+            Doc(
+                """
+                An alternative name for the parameter field.
+
+                This will be used to extract the data and for the generated AsyncAPI.
+                It is particularly useful when you can't use the name you want because it
+                is a Python reserved keyword or similar.
+                """
+            ),
+        ] = None,
+        alias_priority: Annotated[
+            int | None,
+            Doc(
+                """
+                Priority of the alias. This affects whether an alias generator is used.
+                """
+            ),
+        ] = None,
+        validation_alias: Annotated[
+            str | None,
+            Doc(
+                """
+                'Whitelist' validation step. The parameter field will be the single one
+                allowed by the alias or set of aliases defined.
+                """
+            ),
+        ] = None,
+        serialization_alias: Annotated[
+            str | None,
+            Doc(
+                """
+                'Blacklist' validation step. The vanilla parameter field will be the
+                single one of the alias' or set of aliases' fields and all the other
+                fields will be ignored at serialization time.
+                """
+            ),
+        ] = None,
+        title: Annotated[
+            str | None,
+            Doc(
+                """
+                Human-readable title.
+                """
+            ),
+        ] = None,
+        description: Annotated[
+            str | None,
+            Doc(
+                """
+                Human-readable description.
+                """
+            ),
+        ] = None,
+        examples: Annotated[
+            list[Any] | None,
+            Doc(
+                """
+                Example values for this field.
+                """
+            ),
+        ] = None,
+        gt: Annotated[
+            float | None,
+            Doc(
+                """
+                Greater than. If set, value must be greater than this. Only applicable to
+                numbers.
+                """
+            ),
+        ] = None,
+        ge: Annotated[
+            float | None,
+            Doc(
+                """
+                Greater than or equal. If set, value must be greater than or equal to
+                this. Only applicable to numbers.
+                """
+            ),
+        ] = None,
+        lt: Annotated[
+            float | None,
+            Doc(
+                """
+                Less than. If set, value must be less than this. Only applicable to numbers.
+                """
+            ),
+        ] = None,
+        le: Annotated[
+            float | None,
+            Doc(
+                """
+                Less than or equal. If set, value must be less than or equal to this.
+                Only applicable to numbers.
+                """
+            ),
+        ] = None,
+        multiple_of: Annotated[
+            float | None,
+            Doc(
+                """
+                Value must be a multiple of this. Only applicable to numbers.
+                """
+            ),
+        ] = Undefined,
+        strict: Annotated[
+            bool | None,
+            Doc(
+                """
+                If `True`, strict validation is applied to the field.
+                """
+            ),
+        ] = Undefined,
+        min_length: Annotated[
+            int | None,
+            Doc(
+                """
+                Minimum length for strings.
+                """
+            ),
+        ] = None,
+        max_length: Annotated[
+            int | None,
+            Doc(
+                """
+                Maximum length for strings.
+                """
+            ),
+        ] = None,
+        pattern: Annotated[
+            str | None,
+            Doc(
+                """
+                RegEx pattern for strings.
+                """
+            ),
+        ] = None,
+        allow_inf_nan: Annotated[
+            bool | None,
+            Doc(
+                """
+                If `True`, strict validation is applied to the field.
+                """
+            ),
+        ] = Undefined,
+        max_digits: Annotated[
+            int | None,
+            Doc(
+                """
+                Maximum number of allow digits for strings.
+                """
+            ),
+        ] = Undefined,
+        decimal_places: Annotated[
+            int | None,
+            Doc(
+                """
+                Maximum number of decimal places allowed for numbers.
+                """
+            ),
+        ] = Undefined,
+        union_mode: Annotated[
+            Literal["smart", "left_to_right"] | None,
+            Doc(
+                """
+                The strategy to apply when validating a union. Can be `smart` 
+                (the default), or `left_to_right`.
+                """
+            ),
+        ] = None,
+        discriminator: Annotated[
+            str | None,
+            Doc(
+                """
+                Parameter field name for discriminating the type in a tagged union.
+                """
+            ),
+        ] = None,
+        json_schema_extra: Annotated[
+            dict[str, Any] | Callable[[dict[str, Any]], None] | None,
+            Doc(
+                """
+                Any additional JSON schema data for the schema property.
+                """
+            ),
+        ] = None,
     ):
         kwargs = dict(
             default=default,
-            annotation=annotation,
             default_factory=default_factory,
             alias=alias,
             alias_priority=alias_priority,
@@ -67,7 +257,6 @@ class Payload(FieldInfo):
             union_mode=union_mode,
             discriminator=discriminator,
             json_schema_extra=json_schema_extra,
-            **extra,
         )
         use_kwargs = {k: v for k, v in kwargs.items() if v is not Undefined}
 

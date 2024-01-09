@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Annotated, Any, ClassVar
+
+from typing_extensions import Doc
 
 from ..utils import external
 from .correlation_id import CorrelationId
@@ -11,14 +13,93 @@ if TYPE_CHECKING:
 @external
 class MessageTrait:
     """
-    Describes a trait that MAY be applied to a Message Object. This object MAY
-    contain any property from the Message Object, except payload and traits.
+    Describes a trait that MAY be applied to a `Message`. This object may
+    contain any property from the `Message`, except payload and traits.
+
+    **Example**
+
+    ```python
+    from message_flow import Header, CorrelationId, MessageTrait
+
+
+    class CorrelationIdTrait(MessageTrait):
+        message_id: str=Header()
+        correlation_id=CorrelationId("message_id")
+    ```
     """
 
-    correlation_id: ClassVar[CorrelationId]
-    title: ClassVar[str]
-    summary: ClassVar[str]
-    description: ClassVar[str]
+    correlation_id: Annotated[
+        ClassVar[CorrelationId],
+        Doc(
+            """
+            Definition of the correlation ID used for message tracing or matching.
+
+            **Example**
+
+            ```python
+            from message_flow import CorrelationId, MessageTrait
+
+            
+            class CorrelationIdTrait(MessageTrait):
+                correlation_id=CorrelationId("message_id")
+            ```
+            """
+        ),
+    ]
+    title: Annotated[
+        ClassVar[str],
+        Doc(
+            """
+            A human-friendly title for the message.
+
+            **Example**
+
+            ```python
+            from message_flow import MessageTrait
+
+            
+            class InfoTrait(MessageTrait):
+                title="Create Order"
+            ```
+            """
+        ),
+    ]
+    summary: Annotated[
+        ClassVar[str],
+        Doc(
+            """
+            A short summary of what the message is about.
+
+            **Example**
+
+            ```python
+            from message_flow import MessageTrait
+
+            
+            class InfoTrait(MessageTrait):
+                summary="Used to create orders"
+            ```
+            """
+        ),
+    ]
+    description: Annotated[
+        ClassVar[str],
+        Doc(
+            """
+            A verbose explanation of the message. CommonMark syntax can be used for rich text representation.
+
+            **Example**
+
+            ```python
+            from message_flow import MessageTrait
+
+            
+            class InfoTrait(MessageTrait):
+                description="Used to create orders"
+            ```
+            """
+        ),
+    ]
 
     @classmethod
     def update_headers(cls, namespace: dict[str, Any]) -> None:

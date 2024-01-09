@@ -1,4 +1,98 @@
 site_name: Message Flow
-site_name: Pydantic
 site_description: Asynchronous Communication Framework
 strict: true
+
+theme:
+  name: 'material'
+  logo: assets/images/logo.svg
+  favicon: assets/images/favicon.svg
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default 
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+- tables
+- toc:
+    permalink: true
+    title: Page contents
+    toc_depth: 3
+- admonition
+- pymdownx.details
+- pymdownx.superfences
+- pymdownx.highlight:
+    pygments_lang_class: true
+- pymdownx.extra
+- pymdownx.emoji:
+    emoji_index: !!python/name:material.extensions.emoji.twemoji
+    emoji_generator: !!python/name:material.extensions.emoji.to_svg
+- pymdownx.tabbed:
+    alternate_style: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            extensions:
+              - griffe_typingdoc
+            show_root_heading: true
+            show_if_no_docstring: true
+            inherited_members: true
+            members_order: source
+            separate_signature: true
+            unwrap_annotated: true
+            filters: ["!^_"]
+            merge_init_into_class: true
+            docstring_section_style: spacy
+            signature_crossrefs: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+
+repo_name: voro6yov/message-flow
+repo_url: https://github.com/voro6yov/message-flow
+extra:
+  version:
+    provider: mike
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+
+nav:
+  - Get Started:
+    - Welcome to Message Flow: index.md
+  - API Documentation:
+    - MessageFlow: api/message_flow.md
+    - Channel: api/channel.md
+    - Message: api/message.md
+
+extra_css:
+  - stylesheets/extra.css

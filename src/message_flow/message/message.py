@@ -2,6 +2,7 @@ import json
 from typing import TYPE_CHECKING, Annotated, Any, ClassVar
 
 from pydantic import BaseModel, create_model
+from typing_extensions import Doc
 
 from ..shared import Components, Reference
 from ..utils import external
@@ -14,7 +15,17 @@ from .payload import Payload
 @external
 class Message(metaclass=MessageMeta):
     """
-    Describes a message received on a given channel and operation.
+    Describes a `Message` received on a given `Channel` and `Operation`.
+
+    **Example**
+
+    ```python
+    from message_flow import Message, Payload, Header
+
+    class CreateOrder(Message):
+        product_id: str = Payload()
+        tenant_id: str = Header()
+    ```
     """
 
     if TYPE_CHECKING:
@@ -22,7 +33,7 @@ class Message(metaclass=MessageMeta):
         __async_api_components__: ClassVar[Components]
         __async_api_reference__: ClassVar[Reference]
 
-    message_info = MessageInfo()
+    message_info: Annotated[MessageInfo, Doc("Declare additional information of the `Message`.")] = MessageInfo()
 
     def __str__(self) -> str:
         return f"'<Message> message_id: {self.message_id}'"
@@ -32,10 +43,19 @@ class Message(metaclass=MessageMeta):
 
     @property
     def message_id(self) -> str:
+        """
+        An identifier for the described message.
+        """
         return self.__class__.__name__
 
     @property
     def headers(self) -> dict[str, str]:
+        """
+        The message headers.
+
+        Returns:
+            dict[str, str]: The message headers.
+        """
         if not hasattr(self, "_headers"):
             headers_model = self.headers_model()
             self._headers = headers_model(
@@ -46,6 +66,12 @@ class Message(metaclass=MessageMeta):
 
     @property
     def payload(self) -> bytes:
+        """
+        The message payload.
+
+        Returns:
+            bytes: The message payload.
+        """
         if not hasattr(self, "_payload"):
             payload_model = self.payload_model()
             self._payload = (
@@ -73,6 +99,12 @@ class Message(metaclass=MessageMeta):
 
     @classmethod
     def headers_model(cls) -> type[BaseModel]:
+        """
+        Schema definition of the message headers.
+
+        Returns:
+            type[BaseModel]: Pydantic model of the message headers.
+        """
         if not hasattr(cls, "_headers_model"):
             header_props = (
                 (
@@ -95,6 +127,12 @@ class Message(metaclass=MessageMeta):
 
     @classmethod
     def payload_model(cls) -> type[BaseModel]:
+        """
+        Definition of the message payload.
+
+        Returns:
+            type[BaseModel]: Pydantic model of the message payload.
+        """
         if not hasattr(cls, "_payload_model"):
             payload_props = (
                 (

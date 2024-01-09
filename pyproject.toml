@@ -28,6 +28,7 @@ docs = [
     "tomli",
     "mike @ git+https://github.com/jimporter/mike.git",
     "mkdocs-embed-external-markdown>=2.3.0",
+    "griffe-typingdoc>=0.2.4",
 ]
 linting = [
     "ruff>=0.1.7",
