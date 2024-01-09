@@ -92,6 +92,7 @@ nav:
   - API Documentation:
     - MessageFlow: api/message_flow.md
     - Channel: api/channel.md
+    - Message: api/message.md
 
 extra_css:
   - stylesheets/extra.css

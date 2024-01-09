@@ -17,7 +17,7 @@ class Channel(metaclass=ChannelMeta):
     """
     Describes a shared communication `Channel`.
 
-    ## Example
+    **Example**
 
     ```python
     from message_flow import Channel
@@ -44,7 +44,7 @@ class Channel(metaclass=ChannelMeta):
                 This is useful when the address is generated dynamically at runtime 
                 or can't be known upfront.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel
@@ -63,7 +63,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel
@@ -81,7 +81,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel
@@ -100,7 +100,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel
@@ -139,7 +139,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload
@@ -161,7 +161,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload
@@ -184,7 +184,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload
@@ -265,6 +265,8 @@ class Channel(metaclass=ChannelMeta):
 
                 **Note:** Both *reply* and *reply channel* should be provided simultaneously.
 
+                **Example**
+
                 ```python title="Sending a command that requires a reply."
                 from message_flow import Channel, Message, Payload
                 from orders_reply import CreateOrderReply, orders_reply_channel
@@ -287,7 +289,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload
@@ -309,7 +311,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload
@@ -332,7 +334,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload
@@ -399,7 +401,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload
@@ -424,7 +426,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload
@@ -450,7 +452,7 @@ class Channel(metaclass=ChannelMeta):
 
                 It will be added to the generated AsyncAPI.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import Channel, Message, Payload

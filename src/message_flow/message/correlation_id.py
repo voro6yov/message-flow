@@ -11,7 +11,7 @@ class CorrelationId:
     """
     An object that defines a design-time identifier for message tracing and correlation purposes.
 
-    ## Example
+    **Example**
 
     ```python
     from message_flow import CorrelationId
@@ -33,7 +33,7 @@ class CorrelationId:
                 An optional description of the identifier. CommonMark syntax can 
                 be used for rich text representation.
 
-                ## Example
+                **Example**
 
                 ```python
                 from message_flow import CorrelationId

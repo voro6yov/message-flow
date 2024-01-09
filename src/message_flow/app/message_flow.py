@@ -21,7 +21,7 @@ class MessageFlow:
     """
     `MessageFlow` app class, the main entrypoint to use MessageFlow.
 
-    ## Example
+    **Example**
 
     ```python
     from message_flow import MessageFlow
@@ -179,7 +179,7 @@ class MessageFlow:
         """
         Add an `Channel` in the same app.
 
-        ## Example
+        **Example**
 
         ```python
         from message_flow import MessageFlow
@@ -205,7 +205,7 @@ class MessageFlow:
 
                 **Note**: Has lower priority than added channel.
 
-                ## Example
+                **Example**
 
                 ```python title="Publishing without channel addition"
                 from message_flow import MessageFlow
@@ -225,7 +225,7 @@ class MessageFlow:
 
         Added `Channel` has higher priority than specified `channel address`.
 
-        ## Example
+        **Example**
 
         ```python title="Publishing with channel addition"
         from message_flow import MessageFlow
@@ -262,7 +262,7 @@ class MessageFlow:
 
                 **Note**: Has lower priority than added channel.
 
-                ## Example
+                **Example**
 
                 ```python title="Sending without channel addition"
                 from message_flow import MessageFlow
@@ -287,7 +287,7 @@ class MessageFlow:
 
                 **Note**: Has lower priority than added operation's reply channel.
 
-                ## Example
+                **Example**
 
                 ```python title="Sending without channel addition with reply address"
                 from message_flow import MessageFlow
@@ -314,7 +314,7 @@ class MessageFlow:
         and reply address defined in the operation has higher priority than specified
         `reply address`
 
-        ## Example
+        **Example**
 
         ```python title="Sending with channel addition"
         from message_flow import MessageFlow
@@ -353,7 +353,7 @@ class MessageFlow:
         **Note:** If the Channel was not explicitly added to the app, it will
         be implicitly added.
 
-        ## Example
+        **Example**
 
         ```python title="Subscribing to messages from the channel"
         from message_flow import MessageFlow
