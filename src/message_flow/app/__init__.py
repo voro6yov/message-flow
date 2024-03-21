@@ -1,4 +1,3 @@
-from .message_flow import *
-from .messaging import *
+from ..utils import init_package
 
-__all__ = message_flow.__all__ + messaging.__all__
+init_package(__name__)

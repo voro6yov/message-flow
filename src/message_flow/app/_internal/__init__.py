@@ -1,4 +1,3 @@
-from .channels import *
-from .message_flow_schema import *
+from ...utils import init_package
 
-__all__ = message_flow_schema.__all__ + channels.__all__
+init_package(__name__)

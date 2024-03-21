@@ -1,4 +1,3 @@
-from .simple_consumer import *
-from .simple_producer import *
+from ...utils import init_package
 
-__all__ = simple_consumer.__all__ + simple_producer.__all__
+init_package(__name__)

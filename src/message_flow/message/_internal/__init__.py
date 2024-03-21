@@ -1,4 +1,3 @@
-from .message_construction import *
-from .message_schema import *
+from ...utils import init_package
 
-__all__ = message_construction.__all__ + message_schema.__all__
+init_package(__name__)

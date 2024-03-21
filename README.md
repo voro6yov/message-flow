@@ -16,3 +16,79 @@ Asynchronous APIs, which allow servers to push notifications and data directly t
 - **Easy**: Designed to be easy to use and learn. Less time reading docs.
 - **Reliable**: Production-ready framework, equipped with automated, interactive documentation.
 - **Standards-based**: Based on (and fully compatible with) the open standard [AsyncAPI](https://www.asyncapi.com) and [JSON Schema](https://json-schema.org).
+
+## Installation
+
+Installing Message Flow is as simple as:
+
+```console
+pip install message-flow
+```
+
+## Requirements
+
+Python 3.10+
+
+- [Pydantic](https://docs.pydantic.dev/latest/) for the messages serialization and deserialization.
+
+## Message Flow Examples
+
+To see Message Flow at work, let's start with a simple example, creating a consumer and publisher of OrderCreated event:
+
+- Create a file *publisher.py* with:
+
+```python title="OrderCreated event publishing"
+from message_flow import MessageFlow, Message, Payload, Header
+
+
+class OrderCreated(Message):
+    order_id: str = Payload()
+    tenant_id: str = Header()
+
+
+if __name__ == "__main__":
+    app = MessageFlow()
+
+    app.publish(OrderCreated(order_id="order_id", tenant_id="tenant_id"), channel_address="orders")
+    
+```
+
+- Create a file *dispatcher.py* with:
+
+```python title="OrderCreated event dispatching"
+from message_flow import MessageFlow, Message, Payload, Header
+
+
+class OrderCreated(Message):
+    order_id: str = Payload()
+    tenant_id: str = Header()
+
+
+if __name__ == "__main__":
+    app = MessageFlow()
+
+    @app.subscribe(address="orders", message=OrderCreated)
+    def order_created_handler(order_created: OrderCreated) -> None:
+        print("Event received", order_created.order_id, order_created.tenant_id)
+
+    app.dispatch()
+
+```
+
+- Run the dispatcher with:
+
+```console
+$ python dispatcher.py
+```
+
+- Open another terminal and publish message with:
+
+```console
+$ python publisher.py
+```
+
+- In terminal with running dispatcher you should see the following message:
+
+```console
+Event received order_id tenant_id
+```
