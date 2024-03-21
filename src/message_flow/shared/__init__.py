@@ -1,4 +1,3 @@
-from .components import *
-from .reference import *
+from ..utils import init_package
 
-__all__ = components.__all__ + reference.__all__
+init_package(__name__)

@@ -23,8 +23,8 @@ class MessageTrait:
 
 
     class CorrelationIdTrait(MessageTrait):
-        message_id: str=Header()
-        correlation_id=CorrelationId("message_id")
+        message_id: str = Header()
+        correlation_id = CorrelationId("message_id")
     ```
     """
 

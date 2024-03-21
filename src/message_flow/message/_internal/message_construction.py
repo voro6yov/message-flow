@@ -100,10 +100,12 @@ class MessageMeta(ABCMeta):
 
             for component_name, component in self.components.items():
                 default_name = f"_dflt_{component_name}"
-                if component.default is not PydanticUndefined:
+                if component.default_factory is not None:
+                    self.globals[default_name] = component.default_factory
+                    value = f"{default_name}() if {component_name} == '_HAS_DEFAULT_FACTORY' else {component_name}"
+                else:
                     self.globals[default_name] = component.default
-
-                value = component_name
+                    value = component_name
 
                 body_lines.append(f"self.{component_name} = {value}")
 
@@ -115,10 +117,12 @@ class MessageMeta(ABCMeta):
         def _make_args(self) -> str:
             init_params = []
             for component_name, component in self.components.items():
-                if component.default == PydanticUndefined:
-                    default = ""
-                else:
+                if component.default != PydanticUndefined:
                     default = f" = _dflt_{component_name}"
+                elif component.default_factory is not None:
+                    default = "='_HAS_DEFAULT_FACTORY'"
+                else:
+                    default = ""
 
                 init_params.append(f"{component_name}: _type_{component_name}{default}")
 

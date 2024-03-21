@@ -1,4 +1,3 @@
-from .dispatcher import *
-from .producer import *
+from ...utils import init_package
 
-__all__ = dispatcher.__all__ + producer.__all__
+init_package(__name__)

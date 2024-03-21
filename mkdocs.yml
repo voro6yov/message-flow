@@ -89,6 +89,7 @@ validation:
 nav:
   - Get Started:
     - Welcome to Message Flow: index.md
+    - Installation: install.md
   - API Documentation:
     - MessageFlow: api/message_flow.md
     - Channel: api/channel.md

@@ -1,3 +1,3 @@
-from .operation import *
+from ..utils import init_package
 
-__all__ = operation.__all__
+init_package(__name__)
