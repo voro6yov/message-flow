@@ -153,19 +153,17 @@ class Message(metaclass=MessageMeta):
         return cls._payload_model
 
     @classmethod
-    def from_payload_and_headers(cls, raw_payload: bytes, headers: dict[str, str]) -> "Message":
+    def from_payload_and_headers(cls, raw_payload: bytes, raw_headers: dict[str, str]) -> "Message":
         payload_obj = cls.payload_model()(**json.loads(raw_payload.decode()))
         payload: dict[str, Any] = {
             payload_name: getattr(payload_obj, payload_name) for payload_name in cls.payload_attributes()
         }
-        return cls(
-            **payload,
-            **{
-                header_name: header
-                for header_name in cls.headers_attributes()
-                if (header := headers.get(header_name)) is not None
-            },
-        )
+
+        headers_obj = cls.headers_model()(**raw_headers)
+        headers: dict[str, Any] = {
+            header_name: getattr(headers_obj, header_name) for header_name in cls.headers_attributes()
+        }
+        return cls(**payload, **headers)
 
     def add_routing_headers(self, extra_headers: dict[str, str]) -> None:
         self.headers.update(extra_headers)
