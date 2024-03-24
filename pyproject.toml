@@ -1,12 +1,13 @@
 [project]
 name = "message-flow"
-version = "0.3.1"
+version = "0.3.2"
 description = "Asynchronous Communication Framework"
 authors = [
     {name = "Valentin Vorobyev", email = "voro6yov.valentin@gmail.com"},
 ]
 dependencies = [
     "pydantic>=2.5.2",
+    "typer>=0.9.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -15,6 +16,15 @@ license = {text = "Apache License 2.0"}
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
+[project.optional-dependencies]
+reload = [
+    "watchfiles>=0.21.0",
+]
+
+
+[project.scripts]
+message-flow = "message_flow.__main__:cli"
 
 [tool.pdm.dev-dependencies]
 docs = [

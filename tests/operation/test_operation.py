@@ -5,8 +5,7 @@ from message_flow.operation import Operation
 
 
 def test_operation():
-    class Empty(Message):
-        ...
+    class Empty(Message): ...
 
     test_operation = Operation.as_event(
         message=Empty,

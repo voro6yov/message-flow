@@ -6,11 +6,8 @@ class OrderCreated(Message):
     tenant_id: str = Header()
 
 
-if __name__ == "__main__":
-    app = MessageFlow()
+app = MessageFlow()
 
-    @app.subscribe(address="orders", message=OrderCreated)
-    def order_created_handler(order_created: OrderCreated) -> None:
-        print("Event received", order_created.order_id, order_created.tenant_id)
-
-    app.dispatch()
+@app.subscribe(address="orders", message=OrderCreated)
+def order_created_handler(order_created: OrderCreated) -> None:
+    print("Event received", order_created.order_id, order_created.tenant_id)
