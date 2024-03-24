@@ -15,5 +15,4 @@ class FakeMessageProducer(MessageProducer):
     def send(self, channel: str, payload: bytes, headers: dict[str, str] | None = None) -> None:
         self.parent.message_with_channel = MessageWithChannel(channel, payload, headers)
 
-    def close(self) -> None:
-        ...
+    def close(self) -> None: ...

@@ -1,3 +1,3 @@
-from .channel import *
+from ..utils import init_package
 
-__all__ = channel.__all__
+init_package(__name__)
