@@ -11,9 +11,13 @@ from ..messaging import MessageConsumer
 @internal
 class SimpleMessageConsumer(MessageConsumer):
     def __init__(
-        self, file_path: str = "/tmp/message-flow-queue.txt", dry_run: bool = False, throw_error: bool = False
+        self,
+        logger: logging.Logger,
+        file_path: str = "/tmp/message-flow-queue.txt",
+        dry_run: bool = False,
+        throw_error: bool = False,
     ) -> None:
-        self._logger = logging.getLogger(__name__)
+        self._logger = logger
 
         self._dry_run = dry_run
         self._throw_error = throw_error
@@ -60,10 +64,9 @@ class SimpleMessageConsumer(MessageConsumer):
             self._logger.debug("Got message empty message. Start sleeping...")
             time.sleep(1)
         except Exception as error:
-            self._logger.info("An error occurred while consuming events", exc_info=error)
+            self._logger.debug("An error occurred while consuming events", exc_info=error)
         finally:
             self._commit_message(message)
-            self._logger.debug("Message %s is committed.")
 
     def _handle_message(self, message: str) -> None:
         channel, payload, headers = self._parse_message(message)
@@ -83,3 +86,4 @@ class SimpleMessageConsumer(MessageConsumer):
         if message is not None:
             self._position += len(message)
             self._fp.seek(self._position)
+            self._logger.debug("Message %s is committed.", message)

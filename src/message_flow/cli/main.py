@@ -1,6 +1,7 @@
 import typer
 
 from .cli_app import CLIApp
+from .logging_level import LoggingLevel
 
 __all__ = ["cli"]
 
@@ -20,16 +21,16 @@ def dispatch(
         ...,
         help="[python_module:MessageFlow] - path to your application",
     ),
-    reload: bool = typer.Option(
-        False,
-        "--reload",
-        is_flag=True,
-        help="Restart app at directory files changes",
+    log_level: LoggingLevel = typer.Option(
+        LoggingLevel.INFO,
+        case_sensitive=False,
+        show_default=False,
+        help="[INFO] default",
     ),
 ):
     """
     Shoot the portal gun
     """
-    cli_app = CLIApp(app, reload)
+    cli_app = CLIApp(app, log_level)
 
     cli_app.dispatch()

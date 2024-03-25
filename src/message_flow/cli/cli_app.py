@@ -1,18 +1,33 @@
+import logging
+from collections import defaultdict
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
-from typing import Any
+from typing import DefaultDict
 
 import typer
 
+from ..app import MessageFlow
 from ..utils import internal
+from .logging_level import LoggingLevel
 
 
 @internal
 class CLIApp:
-    def __init__(self, app_path: str, reload: bool = False) -> None:
+    LOGGING_LEVELS: DefaultDict[str, int] = defaultdict(
+        lambda: logging.INFO,
+        **{
+            LoggingLevel.CRITICAL: logging.CRITICAL,
+            LoggingLevel.ERROR: logging.ERROR,
+            LoggingLevel.WARNING: logging.WARNING,
+            LoggingLevel.INFO: logging.INFO,
+            LoggingLevel.DEBUG: logging.DEBUG,
+        },
+    )
+
+    def __init__(self, app_path: str, log_level: LoggingLevel) -> None:
         self.app_path = app_path
 
-        self.reload = reload
+        self.instance.set_logging_level(self.LOGGING_LEVELS[log_level])
 
     @property
     def app_path(self) -> str:
@@ -49,19 +64,20 @@ class CLIApp:
         return self._app_name
 
     @property
-    def instance(self) -> Any:
-        try:
-            app_object = self._import()
-        except FileNotFoundError as e:
-            typer.echo(e, err=True)
-            raise typer.BadParameter("Please, input module like [python_module:message_flow_app_name]") from e
-        else:
-            return app_object  # type: ignore
+    def instance(self) -> MessageFlow:
+        if not hasattr(self, "_instance"):
+            try:
+                self._instance = self._import()
+            except FileNotFoundError as e:
+                typer.echo(e, err=True)
+                raise typer.BadParameter("Please, input module like [python_module:message_flow_app_name]") from e
+
+        return self._instance
 
     def dispatch(self) -> None:
         self.instance.dispatch()
 
-    def _import(self) -> Any:
+    def _import(self) -> MessageFlow:
         spec = spec_from_file_location(
             "mode",
             f"{self.module_path}.py",

@@ -6,7 +6,7 @@ from typing_extensions import Doc, deprecated
 
 from ..channel import Channel
 from ..message import Message
-from ..utils import external
+from ..utils import external, logger
 from ._internal import Channels, Info, MessageFlowSchema
 from ._message_management import Dispatcher, Producer
 from ._simple_messaging import SimpleMessageConsumer, SimpleMessageProducer
@@ -127,8 +127,27 @@ class MessageFlow:
                 """
             ),
         ] = "0.1.0",
+        logger: Annotated[
+            logging.Logger,
+            Doc(
+                """
+                The custom logger for the application.
+
+                **Example**
+
+                ```python
+                import logging
+                from message_flow import MessageFlow
+
+                custom_logger = logging.getLogger("custom_logger")
+
+                app = MessageFlow(logger=custom_logger)
+                ```
+                """
+            ),
+        ] = logger,
     ) -> None:
-        self._logger = logging.getLogger(__name__)
+        self._logger = logger
 
         self.asyncapi_version: Annotated[
             str,
@@ -160,8 +179,8 @@ class MessageFlow:
         self.version = version
 
         self._channels = Channels(channels=channels)
-        self._message_producer = message_producer or SimpleMessageProducer()
-        self._message_consumer = message_consumer or SimpleMessageConsumer()
+        self._message_producer = message_producer or SimpleMessageProducer(self._logger)
+        self._message_consumer = message_consumer or SimpleMessageConsumer(self._logger)
 
     @property
     def producer(self) -> Producer:
@@ -172,7 +191,7 @@ class MessageFlow:
     @property
     def dispatcher(self) -> Dispatcher:
         if not hasattr(self, "_dispatcher"):
-            self._dispatcher = Dispatcher(self._channels, self._message_consumer, self.producer)
+            self._dispatcher = Dispatcher(self._channels, self._message_consumer, self.producer, self._logger)
         return self._dispatcher
 
     def add_channel(self, channel: Annotated[Channel, Doc("The channel to add.")]) -> None:
@@ -379,6 +398,7 @@ class MessageFlow:
         """
         try:
             self.dispatcher.initialize()
+            self._logger.info("Message Flow app starting...")
             self._message_consumer.start_consuming()
         except Exception as error:
             self._logger.error("An error occurred while dispatching events", exc_info=error)
@@ -403,3 +423,9 @@ class MessageFlow:
         )
 
         return json.dumps(schema)
+
+    def set_logging_level(self, level: int) -> None:
+        """
+        Set logging level for the app logger.
+        """
+        self._logger.setLevel(level=level)

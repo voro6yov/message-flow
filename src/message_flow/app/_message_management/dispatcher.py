@@ -11,20 +11,22 @@ from .routing_headers import RoutingHeaders
 @final
 @internal
 class Dispatcher:
-    def __init__(self, channels: Channels, message_consumer: MessageConsumer, producer: Producer) -> None:
-        self._logger = logging.getLogger(__name__)
+    def __init__(
+        self, channels: Channels, message_consumer: MessageConsumer, producer: Producer, logger: logging.Logger
+    ) -> None:
+        self._logger = logger
 
         self._channels = channels
         self._message_consumer = message_consumer
         self._producer = producer
 
     def initialize(self) -> None:
-        self._logger.info("Initializing dispatcher")
+        self._logger.debug("Initializing dispatcher")
         self._message_consumer.subscribe(
             self._channels.addresses,
             self.message_handler,
         )
-        self._logger.info("Initialized dispatcher")
+        self._logger.debug("Initialized dispatcher")
 
     def message_handler(self, payload: bytes, headers: dict[str, str]) -> None:
         if (

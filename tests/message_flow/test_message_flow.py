@@ -3,10 +3,11 @@ import pytest
 from message_flow import Channel, MessageFlow
 from message_flow.app._internal import Channels
 from message_flow.app._simple_messaging import SimpleMessageConsumer
+from message_flow.utils import logger
 
 
 def test_dispatch__dry_run():
-    app = MessageFlow(message_consumer=SimpleMessageConsumer(dry_run=True))
+    app = MessageFlow(message_consumer=SimpleMessageConsumer(logger, dry_run=True))
 
     app.dispatch()
 
@@ -15,7 +16,7 @@ def test_dispatch__dry_run():
 
 
 def test_dispatch__error():
-    app = MessageFlow(message_consumer=SimpleMessageConsumer(throw_error=True))
+    app = MessageFlow(message_consumer=SimpleMessageConsumer(logger, throw_error=True))
 
     with pytest.raises(RuntimeError):
         app.dispatch()
