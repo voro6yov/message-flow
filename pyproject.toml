@@ -1,6 +1,6 @@
 [project]
 name = "message-flow"
-version = "0.3.2"
+version = "0.3.3"
 description = "Asynchronous Communication Framework"
 authors = [
     {name = "Valentin Vorobyev", email = "voro6yov.valentin@gmail.com"},
@@ -18,8 +18,8 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project.optional-dependencies]
-reload = [
-    "watchfiles>=0.21.0",
+rabbitmq = [
+    "message-flow-rabbitmq>=0.2.2",
 ]
 
 
@@ -56,23 +56,23 @@ testing = [
 
 [tool.ruff]
 line-length = 120
-extend-select = ['Q', 'RUF100', 'C90', 'UP', 'I', 'T']
-extend-ignore = ['D105', 'D107', 'D205', 'D415']
-flake8-quotes = {inline-quotes = 'double', multiline-quotes = 'double'}
-mccabe = { max-complexity = 14 }
-isort = { known-first-party = ['message_flow', 'tests'] }
+lint.extend-select = ['Q', 'RUF100', 'C90', 'UP', 'I', 'T']
+lint.extend-ignore = ['D105', 'D107', 'D205', 'D415']
+lint.flake8-quotes = {inline-quotes = 'double', multiline-quotes = 'double'}
+lint.mccabe = { max-complexity = 14 }
+lint.isort = { known-first-party = ['message_flow', 'tests'] }
 target-version = "py37"
 
-[tool.ruff.extend-per-file-ignores]
+[tool.ruff.lint.extend-per-file-ignores]
 "tests/**/*.py" = ['T', 'E721', 'F811']
 
 [tool.ruff.format]
 quote-style = 'double'
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 '*/__init__.py' = ['F405', 'F403', 'D']
 '*/__init__.pyi' = ['F405', 'F403', 'D']
 'tests/*' = ['D']

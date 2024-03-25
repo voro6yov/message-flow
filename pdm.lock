@@ -2,10 +2,10 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default", "linting", "testing", "docs", "reload", "local-run"]
+groups = ["default", "linting", "testing", "docs", "reload", "local-run", "rabbitmq"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:6c8cc695566d8ca5acdf390a8bc8d31621aa138de61e2c5eb2250f78ab583aab"
+content_hash = "sha256:014e81ab012600f3c8d1ed42590f55e645c9abf48e30112043531095ff26a422"
 
 [[package]]
 name = "annotated-types"
@@ -400,6 +400,19 @@ files = [
 ]
 
 [[package]]
+name = "message-flow-rabbitmq"
+version = "0.2.2"
+requires_python = ">=3.10"
+summary = "RabbitMQ messaging for the Message Flow"
+dependencies = [
+    "pika>=1.3.2",
+]
+files = [
+    {file = "message_flow_rabbitmq-0.2.2-py3-none-any.whl", hash = "sha256:fa28de567d34b7726d6cbdf363c157cd176d6b9a2e250e551d47a96020649cd8"},
+    {file = "message_flow_rabbitmq-0.2.2.tar.gz", hash = "sha256:644b465541e9d5880964f0701b01ee7b7ee91d9be1d57d9bda4d55e8b133b2b2"},
+]
+
+[[package]]
 name = "mike"
 version = "2.1.0.dev0"
 git = "https://github.com/jimporter/mike.git"
@@ -651,6 +664,16 @@ summary = "Utility library for gitignore style pattern matching of file paths."
 files = [
     {file = "pathspec-0.12.1-py3-none-any.whl", hash = "sha256:a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08"},
     {file = "pathspec-0.12.1.tar.gz", hash = "sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712"},
+]
+
+[[package]]
+name = "pika"
+version = "1.3.2"
+requires_python = ">=3.7"
+summary = "Pika Python AMQP Client Library"
+files = [
+    {file = "pika-1.3.2-py3-none-any.whl", hash = "sha256:0779a7c1fafd805672796085560d290213a465e4f6f76a6fb19e378d8041a14f"},
+    {file = "pika-1.3.2.tar.gz", hash = "sha256:b2a327ddddf8570b4965b3576ac77091b850262d34ce8c1d8cb4e4146aa4145f"},
 ]
 
 [[package]]
