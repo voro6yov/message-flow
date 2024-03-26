@@ -25,7 +25,7 @@ format: .pdm
 
 .PHONY: lint  ## Lint python source files
 lint: .pdm
-	pdm run ruff $(sources)
+	pdm run ruff check $(sources)
 	pdm run ruff format --check $(sources)
 
 .PHONY: codespell  ## Use Codespell to do spellchecking

@@ -24,7 +24,7 @@ class CLIApp:
         },
     )
 
-    def __init__(self, app_path: str, log_level: LoggingLevel) -> None:
+    def __init__(self, app_path: str, log_level: LoggingLevel = LoggingLevel.INFO) -> None:
         self.app_path = app_path
 
         self.instance.set_logging_level(self.LOGGING_LEVELS[log_level])
@@ -76,6 +76,9 @@ class CLIApp:
 
     def dispatch(self) -> None:
         self.instance.dispatch()
+
+    def make_async_api_schema(self) -> str:
+        return self.instance.make_async_api_schema()
 
     def _import(self) -> MessageFlow:
         spec = spec_from_file_location(

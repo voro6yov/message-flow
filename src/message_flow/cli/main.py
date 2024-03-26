@@ -1,5 +1,6 @@
 import typer
 
+from ._async_api_schema import serve_schema
 from .cli_app import CLIApp
 from .logging_level import LoggingLevel
 
@@ -29,8 +30,31 @@ def dispatch(
     ),
 ):
     """
-    Shoot the portal gun
+    Starts message dispatching
     """
     cli_app = CLIApp(app, log_level)
 
     cli_app.dispatch()
+
+
+@cli.command()
+def docs(
+    app: str = typer.Argument(
+        ...,
+        help="[python_module:MessageFlow] - path to your application",
+    ),
+    host: str = typer.Option(
+        "localhost",
+        help="documentation hosting address",
+    ),
+    port: int = typer.Option(
+        8000,
+        help="documentation hosting port",
+    ),
+):
+    """
+    Starts Async API schema serving
+    """
+    cli_app = CLIApp(app)
+
+    serve_schema(schema=cli_app.make_async_api_schema(), host=host, port=port)
