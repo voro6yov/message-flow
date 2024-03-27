@@ -1,6 +1,6 @@
 [project]
 name = "message-flow"
-version = "0.3.3"
+version = "0.3.4"
 description = "Asynchronous Communication Framework"
 authors = [
     {name = "Valentin Vorobyev", email = "voro6yov.valentin@gmail.com"},
