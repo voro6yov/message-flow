@@ -1,7 +1,7 @@
 import typer
 
-from ._async_api_schema import serve_schema
 from .cli_app import CLIApp
+from .documentation_server import DocumentationServer
 from .logging_level import LoggingLevel
 
 __all__ = ["cli"]
@@ -56,5 +56,4 @@ def docs(
     Starts Async API schema serving
     """
     cli_app = CLIApp(app)
-
-    serve_schema(studio_page=cli_app.generate_docs_page(), host=host, port=port)
+    DocumentationServer(studio_page=cli_app.generate_docs_page(), host=host, port=port).serve()
