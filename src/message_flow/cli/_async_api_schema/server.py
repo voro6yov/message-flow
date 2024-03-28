@@ -6,11 +6,11 @@ __all__ = ["serve_schema"]
 
 
 def serve_schema(
-    schema: str,
+    studio_page: str,
     host: str,
     port: int,
 ) -> None:
-    RequestHandler.schema = schema
+    RequestHandler.studio_page = studio_page
 
     httpd = HTTPServer((host, port), RequestHandler)
 

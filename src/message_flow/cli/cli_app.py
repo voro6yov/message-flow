@@ -77,8 +77,8 @@ class CLIApp:
     def dispatch(self) -> None:
         self.instance.dispatch()
 
-    def make_async_api_schema(self) -> str:
-        return self.instance.make_async_api_schema()
+    def generate_docs_page(self) -> str:
+        return self.instance.generate_docs_page()
 
     def _import(self) -> MessageFlow:
         spec = spec_from_file_location(

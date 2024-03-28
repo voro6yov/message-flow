@@ -57,4 +57,4 @@ def docs(
     """
     cli_app = CLIApp(app)
 
-    serve_schema(schema=cli_app.make_async_api_schema(), host=host, port=port)
+    serve_schema(studio_page=cli_app.generate_docs_page(), host=host, port=port)
