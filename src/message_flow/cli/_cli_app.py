@@ -8,7 +8,8 @@ import typer
 
 from ..app import MessageFlow
 from ..utils import internal
-from .logging_level import LoggingLevel
+from ._documentation_server import DocumentationServer
+from ._logging_level import LoggingLevel
 
 
 @internal
@@ -49,6 +50,7 @@ class CLIApp:
             module, _ = self.app_path.split(":", 2)
 
             module_path = Path.cwd()
+
             for path_element in module.split("."):
                 module_path = module_path / path_element
 
@@ -77,8 +79,8 @@ class CLIApp:
     def dispatch(self) -> None:
         self.instance.dispatch()
 
-    def generate_docs_page(self) -> str:
-        return self.instance.generate_docs_page()
+    def serve_documentation(self, host: str, port: int) -> None:
+        DocumentationServer(studio_page=self.instance.generate_docs_page(), host=host, port=port).serve()
 
     def _import(self) -> MessageFlow:
         spec = spec_from_file_location(
@@ -87,13 +89,13 @@ class CLIApp:
             submodule_search_locations=[str(self.module_path.parent.absolute())],
         )
 
-        if spec is None:  # pragma: no cover
+        if spec is None:
             raise FileNotFoundError(self.module_path)
 
         module = module_from_spec(spec)
         loader = spec.loader
 
-        if loader is None:  # pragma: no cover
+        if loader is None:
             raise ValueError(f"{spec} has no loader")
 
         loader.exec_module(module)

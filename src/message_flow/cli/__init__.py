@@ -1,3 +1,3 @@
-from .main import cli
+from ..utils import init_package
 
-__all__ = ["cli"]
+init_package(__name__)

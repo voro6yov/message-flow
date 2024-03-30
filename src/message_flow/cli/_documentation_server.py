@@ -1,16 +1,20 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from ..utils import internal
+from ..utils import internal, logger
 
 
 @internal
 class DocumentationServer:
     def __init__(self, studio_page: str, host: str, port: int) -> None:
+        self._host = host
+        self._port = port
+
         self.RequestHandler.studio_page = studio_page
 
-        self._httpd = HTTPServer((host, port), self.RequestHandler)
+        self._httpd = HTTPServer((self._host, self._port), self.RequestHandler)
 
     def serve(self) -> None:
+        logger.info("Start serving documentation on %s:%s", self._host, self._port)
         self._httpd.serve_forever()
 
     class RequestHandler(BaseHTTPRequestHandler):
