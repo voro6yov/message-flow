@@ -1,5 +1,6 @@
 import json
 import logging
+import warnings
 from typing import Annotated, Callable, final
 
 from typing_extensions import Doc, deprecated
@@ -7,6 +8,7 @@ from typing_extensions import Doc, deprecated
 from ..channel import Channel
 from ..message import Message
 from ..utils import external, logger
+from ._fast_api import FastAPI
 from ._internal import AsyncAPIStudioPage, Channels, Info, MessageFlowSchema
 from ._message_management import Dispatcher, Producer
 from ._simple_messaging import SimpleMessageConsumer, SimpleMessageProducer
@@ -395,6 +397,22 @@ class MessageFlow:
     def dispatch(self) -> None:
         """
         Initiate the dispatch of `Messages` on the added `Channels`.
+
+        **Example**
+
+        ```python title="Starting dispatching"
+        from message_flow import MessageFlow
+
+        from .orders import OrderCreated
+
+        app = MessageFlow()
+
+        @app.subscribe(address="orders", message=OrderCreated)
+        def handle_order_created(event: OrderCreated) -> None:
+            ...
+
+        app.dispatch()
+        ```
         """
         try:
             self.dispatcher.initialize()
@@ -410,6 +428,22 @@ class MessageFlow:
     def make_async_api_schema(self) -> str:
         """
         Generate AsyncAPI schema for the specified `Channels`, `Operations` and `Messages`.
+
+        **Example**
+
+        ```python title="Making AsyncAPI Schema"
+        from message_flow import MessageFlow
+
+        from .orders import OrderCreated
+
+        app = MessageFlow()
+
+        @app.subscribe(address="orders", message=OrderCreated)
+        def handle_order_created(event: OrderCreated) -> None:
+            ...
+
+        app.make_async_api_schema()
+        ```
 
         Returns:
             str: Generated AsyncAPI schema.
@@ -438,6 +472,22 @@ class MessageFlow:
         """
         Generate AsyncAPI Studio page for the generated AsyncAPI schema.
 
+        **Example**
+
+        ```python title="Generating AsyncAPI Studio Page"
+        from message_flow import MessageFlow
+
+        from .orders import OrderCreated
+
+        app = MessageFlow()
+
+        @app.subscribe(address="orders", message=OrderCreated)
+        def handle_order_created(event: OrderCreated) -> None:
+            ...
+
+        app.generate_docs_page()
+        ```
+
         Returns:
             str: Generated AsyncAPI Studio page.
         """
@@ -453,8 +503,56 @@ class MessageFlow:
             errors=errors,
         ).generate()
 
-    def set_logging_level(self, level: int) -> None:
+    def set_logging_level(self, level: Annotated[int, Doc("Logging level to set.")]) -> None:
         """
         Set logging level for the app logger.
+
+        **Example**
+
+        ```python title="Setting logging level"
+        import logging
+
+        from message_flow import MessageFlow
+
+        app = MessageFlow()
+
+        app.set_logging_level(logging.INFO)
+        ```
         """
         self._logger.setLevel(level=level)
+
+    def add_async_api_documentation(
+        self,
+        fast_api: Annotated[FastAPI, Doc("FastAPI app.")],
+        documentation_url: Annotated[
+            str, Doc("URL of the AsyncAPI Studio page in the FastAPI app.")
+        ] = "/async-api-docs",
+    ) -> None:
+        """
+        Add AsyncAPI documentation page to the FastAPI application.
+
+        **Example**
+
+        ```python title="Adding AsyncAPI Studio page to FastAPI"
+        from message_flow import MessageFlow
+        from fastapi import FastAPI
+
+        app = MessageFlow()
+        fast_api_app = FastAPI()
+
+        app.add_async_api_documentation(fast_api_app)
+        ```
+        """
+        try:
+            from fastapi import Request  # pyright: ignore[reportMissingImports]
+            from fastapi.responses import HTMLResponse  # pyright: ignore[reportMissingImports]
+        except ImportError:
+            warnings.warn("Please use this method only with FastAPI installed.")
+            return
+
+        documentation_page = self.generate_docs_page()
+
+        async def async_api_docs_html(req: Request) -> HTMLResponse:
+            return HTMLResponse(documentation_page)
+
+        fast_api.add_route(documentation_url, async_api_docs_html, include_in_schema=False)
