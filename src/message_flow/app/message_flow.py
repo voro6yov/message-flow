@@ -7,7 +7,7 @@ from typing_extensions import Doc, deprecated
 from ..channel import Channel
 from ..message import Message
 from ..utils import external, logger
-from ._internal import Channels, Info, MessageFlowSchema
+from ._internal import AsyncAPIStudioPage, Channels, Info, MessageFlowSchema
 from ._message_management import Dispatcher, Producer
 from ._simple_messaging import SimpleMessageConsumer, SimpleMessageProducer
 from .messaging import MessageConsumer, MessageProducer
@@ -423,6 +423,35 @@ class MessageFlow:
         )
 
         return json.dumps(schema)
+
+    def generate_docs_page(
+        self,
+        title: Annotated[str, Doc("The AsyncAPI Studio page title.")] = "MessageFlow",
+        sidebar: Annotated[bool, Doc("Show sidebar flag.")] = True,
+        info: Annotated[bool, Doc("Show info flag.")] = True,
+        servers: Annotated[bool, Doc("Show servers flag.")] = True,
+        operations: Annotated[bool, Doc("Show operations flag.")] = True,
+        messages: Annotated[bool, Doc("Show messages flag.")] = True,
+        schemas: Annotated[bool, Doc("Show schemas flag.")] = True,
+        errors: Annotated[bool, Doc("Show errors flag.")] = True,
+    ) -> str:
+        """
+        Generate AsyncAPI Studio page for the generated AsyncAPI schema.
+
+        Returns:
+            str: Generated AsyncAPI Studio page.
+        """
+        return AsyncAPIStudioPage(
+            schema=self.make_async_api_schema(),
+            title=title,
+            sidebar=sidebar,
+            info=info,
+            servers=servers,
+            operations=operations,
+            messages=messages,
+            schemas=schemas,
+            errors=errors,
+        ).generate()
 
     def set_logging_level(self, level: int) -> None:
         """
