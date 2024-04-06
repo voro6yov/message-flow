@@ -1,8 +1,10 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import final
 
 from ..utils import internal, logger
 
 
+@final
 @internal
 class DocumentationServer:
     def __init__(self, studio_page: str, host: str, port: int) -> None:

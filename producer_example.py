@@ -9,5 +9,5 @@ class OrderCreated(Message):
 if __name__ == "__main__":
     app = MessageFlow()
 
-    app.publish(OrderCreated(order_id="order_id", tenant_id="tenant_id"), channel_address="orders")
+    app.send(OrderCreated(order_id="order_id", tenant_id="tenant_id"), channel_address="orders", reply_to_address="orders_")
     

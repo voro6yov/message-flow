@@ -2,7 +2,7 @@ import logging
 from collections import defaultdict
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
-from typing import DefaultDict
+from typing import DefaultDict, final
 
 import typer
 
@@ -12,6 +12,7 @@ from ._documentation_server import DocumentationServer
 from ._logging_level import LoggingLevel
 
 
+@final
 @internal
 class CLIApp:
     LOGGING_LEVELS: DefaultDict[str, int] = defaultdict(
