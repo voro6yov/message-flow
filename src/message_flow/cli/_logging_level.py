@@ -1,8 +1,10 @@
 from enum import Enum
+from typing import final
 
 from ..utils import internal
 
 
+@final
 @internal
 class LoggingLevel(str, Enum):
     CRITICAL = "critical"

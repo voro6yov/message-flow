@@ -12,6 +12,7 @@ from ._fast_api import FastAPI
 from ._internal import AsyncAPIStudioPage, Channels, Info, MessageFlowSchema
 from ._message_management import Dispatcher, Producer
 from ._simple_messaging import SimpleMessageConsumer, SimpleMessageProducer
+from .base_middleware import BaseMiddleware
 from .messaging import MessageConsumer, MessageProducer
 
 MessageHandler = Callable[[Message], Message | None]
@@ -556,3 +557,42 @@ class MessageFlow:
             return HTMLResponse(documentation_page)
 
         fast_api.add_route(documentation_url, async_api_docs_html, include_in_schema=False)
+
+    def add_middleware(
+        self, middleware: Annotated[type[BaseMiddleware], Doc("Message processing Middleware.")]
+    ) -> None:
+        """
+        Add Middleware.
+
+        **Example**
+
+        ```python title="Adding processing Middleware"
+        import logging
+        from message_flow import MessageFlow, BaseMiddleware
+
+        logger = logging.getLogger(__name__)
+
+
+        class CustomMiddleware(BaseMiddleware):
+            def on_consume(self) -> None:
+                logger.info("Message with %s payload and %s headers received.", self.payload, self.headers)
+                return super().on_consume()
+
+            def after_consume(self, error: Exception | None = None) -> None:
+                logger.info("Message with %s payload and %s headers processed.", self.payload, self.headers)
+                return super().after_consume(error)
+
+            def on_produce(self) -> None:
+                logger.info("Producing message with %s payload and %s headers.", self.payload, self.headers)
+                return super().on_produce()
+
+            def after_produce(self, error: Exception | None = None) -> None:
+                logger.info("Message with %s payload and %s headers produced.", self.payload, self.headers)
+                return super().after_produce(error)
+
+        app = MessageFlow()
+        app.add_middleware(CustomMiddleware)
+
+        ```
+        """
+        self.dispatcher.add_middleware(middleware=middleware)
