@@ -8,4 +8,8 @@ def test_dependent__building(simple_func):
 
 def test_call__building(simple_func):
     call = Call(simple_func)
-    assert call.name == simple_func.__name__
+    dependent = call.parse()
+
+    assert dependent.call == simple_func
+    assert dependent.class_fields == {'a': (int, Ellipsis), 'b': (int, Ellipsis)}
+    assert "b" in dependent.dependencies
